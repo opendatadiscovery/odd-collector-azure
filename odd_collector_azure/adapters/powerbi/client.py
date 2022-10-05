@@ -4,7 +4,7 @@ from aiohttp import ClientSession
 from typing import Dict, Any, List
 from odd_models.models import DataEntity
 from .domain.dataset import Dataset
-from .mappers.datasources import datasources_map
+from .mappers.datasources import datasources_factory
 
 
 class PowerBiClient:
@@ -37,7 +37,7 @@ class PowerBiClient:
         datasources_entities: List[DataEntity] = []
         for datasource_node in datasources_nodes:
             datasource_type = datasource_node['datasourceType']
-            datasource_engine = datasources_map.get(datasource_type)
+            datasource_engine = datasources_factory.get(datasource_type)
             datasource_entity = datasource_engine(datasource_node).map_database()
             datasources_entities.append(datasource_entity)
         return datasources_entities
@@ -50,3 +50,7 @@ class PowerBiClient:
             enriched_datasets.append(dataset)
 
         return enriched_datasets
+
+    async def get_dashboards(self):
+        dashboards_nodes = await self.__get_nodes('dashboards/216cfe89-0727-46f1-9864-f0f23c6af720/tiles')
+        return dashboards_nodes

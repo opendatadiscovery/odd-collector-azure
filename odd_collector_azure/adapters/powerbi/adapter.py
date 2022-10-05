@@ -6,7 +6,7 @@ from .client import PowerBiClient
 from oddrn_generator.generators import Generator, HostnameModel
 from oddrn_generator.path_models import BasePathsModel
 from .domain.dataset import Dataset
-from odd_models.models import DataEntity, DataEntityType, DataEntityGroup
+from odd_models.models import DataEntity, DataEntityType, DataConsumer
 
 
 class PowerBiPathModel(BasePathsModel):
@@ -31,15 +31,18 @@ def map_dataset(
         oddrn_generator: PowerBiGenerator,
         dataset: Dataset,
 ) -> DataEntity:
-    return DataEntity(
+    de = DataEntity(
         oddrn=oddrn_generator.get_oddrn_by_path("datasets", dataset.name),
         name=dataset.name,
+        id=dataset.id,
         type=DataEntityType.DATABASE_SERVICE,
         metadata=[],
-        data_entity_group=DataEntityGroup(
-            entities_list=dataset.datasources
+        owners=dataset.owner,
+        data_consumer=DataConsumer(
+            inputs=dataset.datasources
         ),
     )
+    return de
 
 
 class Adapter(AbstractAdapter):
@@ -57,6 +60,7 @@ class Adapter(AbstractAdapter):
         return self.__oddrn_generator.get_data_source_oddrn()
 
     async def get_data_entity_list(self) -> DataEntityList:
+        # dashboards = await self.client.get_dashboards()
         datasets = await self.client.get_datasets()
         enriched_datasets = await self.client.enrich_datasets_with_datasources_oddrns(datasets)
         datasets_entities = [map_dataset(self.__oddrn_generator, dataset) for dataset in enriched_datasets]

@@ -67,6 +67,6 @@ class PostgresSqlEngine(JdbcDatasourceEngine):
 
 
 datasources: List[Type[DatasourceEngine]] = [MssqlEngine, PostgresSqlEngine, OdbcDatasourceEngine]
-datasources_map: Dict[str, Type[DatasourceEngine]] = {
+datasources_factory: Dict[str, Type[DatasourceEngine]] = {
     datasource.datasource_type: datasource for datasource in datasources
 }
