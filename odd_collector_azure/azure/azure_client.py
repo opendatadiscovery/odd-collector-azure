@@ -1,6 +1,7 @@
 from odd_collector_azure.domain.plugin import AzurePlugin
-from typing import Dict, Any, NamedTuple, Optional
+from typing import Dict, Any, NamedTuple, Optional, Tuple, List
 from aiohttp import ClientSession
+from asyncio import gather
 
 
 class RequestArgs(NamedTuple):
@@ -51,3 +52,15 @@ class AzureClient:
                 data=request_args.payload,
         ) as response:
             return await response.json()
+
+    async def fetch_all_async_responses(
+            self, request_args_list: List[RequestArgs]
+    ):
+        async with ClientSession() as session:
+            return await gather(
+                *[
+                    self.fetch_async_response(session, request_args=request_args)
+                    for request_args in request_args_list
+                ],
+                return_exceptions=True,
+            )

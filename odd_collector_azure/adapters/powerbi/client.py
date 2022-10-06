@@ -4,7 +4,9 @@ from aiohttp import ClientSession
 from typing import Dict, Any, List
 from odd_models.models import DataEntity
 from .domain.dataset import Dataset
+from .domain.dashboard import Dashboard
 from .mappers.datasources import datasources_factory
+from urllib.parse import urlparse, parse_qs
 
 
 class PowerBiClient:
@@ -32,6 +34,40 @@ class PowerBiClient:
                         owner=datasets_node.get('configuredBy')
                         ) for datasets_node in datasets_nodes]
 
+    async def get_dashboards(self) -> List[Dashboard]:
+        dashboards_nodes = await self.__get_nodes('dashboards')
+        return [Dashboard(id=dashboards_node.get('id'),
+                          display_name=dashboards_node.get('displayName'),
+                          ) for dashboards_node in dashboards_nodes]
+
+    async def __get_tiles_nodes_for_dashboards(self, dashboards_ids: List[str]) -> List[dict]:
+        headers = await self.__client.build_headers()
+        urls = [f"{self.__base_url}/dashboards/{dashboard_id}/tiles" for dashboard_id in dashboards_ids]
+        dashboards_with_tiles_nodes = await self.__client.fetch_all_async_responses(
+            [RequestArgs("GET", url, None, headers) for url in urls]
+        )
+        return dashboards_with_tiles_nodes
+
+    async def get_datasets_ids_for_dashboards(self, dashboards_ids: List[str]) -> Dict[str, List[str]]:
+        """
+
+        :return: {dashboard_id: [dataset_id]}
+        """
+        dashboards_with_tiles_nodes = await self.__get_tiles_nodes_for_dashboards(dashboards_ids)
+        dashboards_datasets: Dict[str, List[str]] = {}
+        for dashboard_tiles_node in dashboards_with_tiles_nodes:
+            value = dashboard_tiles_node['value']
+            embed_url = value[0]['embedUrl']
+            parsed_url = urlparse(embed_url)
+            dashboard_id = parse_qs(parsed_url.query)['dashboardId'][0]
+            dashboards_datasets.update({dashboard_id: [tile['datasetId'] for tile in value]})
+
+        return dashboards_datasets
+
+    async def get_gateway(self, gateway_id: str):
+        gtw_nodes = await self.__get_nodes(f'gateways/{gateway_id}')
+        return gtw_nodes
+
     async def __get_datasources_entities_for_dataset(self, dataset_id: str) -> List[DataEntity]:
         datasources_nodes = await self.__get_nodes(f'datasets/{dataset_id}/datasources')
         datasources_entities: List[DataEntity] = []
@@ -50,7 +86,3 @@ class PowerBiClient:
             enriched_datasets.append(dataset)
 
         return enriched_datasets
-
-    async def get_dashboards(self):
-        dashboards_nodes = await self.__get_nodes('dashboards/216cfe89-0727-46f1-9864-f0f23c6af720/tiles')
-        return dashboards_nodes
