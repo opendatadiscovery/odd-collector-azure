@@ -64,10 +64,6 @@ class PowerBiClient:
 
         return dashboards_datasets
 
-    async def get_gateway(self, gateway_id: str):
-        gtw_nodes = await self.__get_nodes(f'gateways/{gateway_id}')
-        return gtw_nodes
-
     async def __get_datasources_entities_for_dataset(self, dataset_id: str) -> List[DataEntity]:
         datasources_nodes = await self.__get_nodes(f'datasets/{dataset_id}/datasources')
         datasources_entities: List[DataEntity] = []

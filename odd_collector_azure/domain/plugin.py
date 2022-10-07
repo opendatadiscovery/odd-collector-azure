@@ -4,11 +4,12 @@ from odd_collector_sdk.types import PluginFactory
 
 
 class AzurePlugin(Plugin):
-    client_id: str
-    client_secret: str
+    client_id: str  # client_id of registered in AD app
+    client_secret: str  # client secret of registered in AD app
     username: str
     password: str
     resource: str
+    domain: str  # yourdomain.com
 
 
 class PowerBiPlugin(AzurePlugin):

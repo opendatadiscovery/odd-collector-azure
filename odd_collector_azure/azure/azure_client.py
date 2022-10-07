@@ -1,5 +1,5 @@
 from odd_collector_azure.domain.plugin import AzurePlugin
-from typing import Dict, Any, NamedTuple, Optional, Tuple, List
+from typing import Dict, Any, NamedTuple, Optional, List
 from aiohttp import ClientSession
 from asyncio import gather
 
