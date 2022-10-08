@@ -19,13 +19,13 @@ class AzureClient:
 
     async def __get_access_token(self) -> str:
         payload = {
-            'grant_type': 'password',
-            'scope': 'openid',
-            'resource': self.resource,
-            'client_id': self.__config.client_id,
-            'client_secret': self.__config.client_secret,
-            'username': self.__config.username,
-            'password': self.__config.password
+            "grant_type": "password",
+            "scope": "openid",
+            "resource": self.resource,
+            "client_id": self.__config.client_id,
+            "client_secret": self.__config.client_secret,
+            "username": self.__config.username,
+            "password": self.__config.password,
         }
         async with ClientSession() as session:
             response = await self.fetch_async_response(
@@ -43,20 +43,18 @@ class AzureClient:
 
     @staticmethod
     async def fetch_async_response(
-            session, request_args: RequestArgs
+        session, request_args: RequestArgs
     ) -> Dict[Any, Any]:
         async with session.request(
-                request_args.method,
-                url=request_args.url,
-                params=request_args.params,
-                headers=request_args.headers,
-                data=request_args.payload,
+            request_args.method,
+            url=request_args.url,
+            params=request_args.params,
+            headers=request_args.headers,
+            data=request_args.payload,
         ) as response:
             return await response.json()
 
-    async def fetch_all_async_responses(
-            self, request_args_list: List[RequestArgs]
-    ):
+    async def fetch_all_async_responses(self, request_args_list: List[RequestArgs]):
         async with ClientSession() as session:
             return await gather(
                 *[

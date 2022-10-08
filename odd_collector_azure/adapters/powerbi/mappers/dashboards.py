@@ -5,10 +5,10 @@ from odd_collector_azure.adapters.powerbi.domain.dashboard import Dashboard
 
 
 def map_dashboard(
-        oddrn_generator: PowerBiGenerator,
-        dashboard: Dashboard,
-        datasets_ids: List[str],
-        datasets_oddrns_map: Dict[str, str]
+    oddrn_generator: PowerBiGenerator,
+    dashboard: Dashboard,
+    datasets_ids: List[str],
+    datasets_oddrns_map: Dict[str, str],
 ) -> DataEntity:
     return DataEntity(
         oddrn=oddrn_generator.get_oddrn_by_path("dashboards", dashboard.display_name),
@@ -16,7 +16,10 @@ def map_dashboard(
         type=DataEntityType.DASHBOARD,
         metadata=[],
         data_consumer=DataConsumer(
-            inputs=[dataset_oddrn for dataset_id, dataset_oddrn in datasets_oddrns_map.items() if
-                    dataset_id in datasets_ids]
+            inputs=[
+                dataset_oddrn
+                for dataset_id, dataset_oddrn in datasets_oddrns_map.items()
+                if dataset_id in datasets_ids
+            ]
         ),
     )

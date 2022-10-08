@@ -3,11 +3,11 @@ from typing import List, Optional
 
 class Dataset:
     def __init__(
-            self,
-            id: str,
-            name: str,
-            owner: Optional[str] = None,
-            datasources: Optional[List[str]] = None
+        self,
+        id: str,
+        name: str,
+        owner: Optional[str] = None,
+        datasources: Optional[List[str]] = None,
     ):
         self.owner = owner
         self.id = id

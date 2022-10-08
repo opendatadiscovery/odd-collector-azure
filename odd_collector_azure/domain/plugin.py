@@ -15,6 +15,4 @@ class PowerBiPlugin(AzurePlugin):
     type: Literal["powerbi"]
 
 
-PLUGIN_FACTORY: PluginFactory = {
-    "powerbi": PowerBiPlugin
-}
+PLUGIN_FACTORY: PluginFactory = {"powerbi": PowerBiPlugin}
