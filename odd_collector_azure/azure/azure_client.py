@@ -13,14 +13,15 @@ class RequestArgs(NamedTuple):
 
 
 class AzureClient:
-    def __init__(self, config: AzurePlugin):
+    def __init__(self, config: AzurePlugin, resource: str):
+        self.resource = resource
         self.__config = config
 
     async def __get_access_token(self) -> str:
         payload = {
             'grant_type': 'password',
             'scope': 'openid',
-            'resource': self.__config.resource,
+            'resource': self.resource,
             'client_id': self.__config.client_id,
             'client_secret': self.__config.client_secret,
             'username': self.__config.username,

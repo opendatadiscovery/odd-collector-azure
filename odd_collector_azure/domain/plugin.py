@@ -8,7 +8,6 @@ class AzurePlugin(Plugin):
     client_secret: str  # client secret of registered in AD app
     username: str
     password: str
-    resource: str
     domain: str  # yourdomain.com
 
 

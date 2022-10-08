@@ -11,7 +11,7 @@ from urllib.parse import urlparse, parse_qs
 
 class PowerBiClient:
     def __init__(self, config: PowerBiPlugin):
-        self.__client = AzureClient(config)
+        self.__client = AzureClient(config, 'https://analysis.windows.net/powerbi/api')
         self.__base_url = 'https://api.powerbi.com/v1.0/myorg/'
 
     async def __get_nodes(self, endpoint: str, params: Dict[str, Any] = None) -> dict:

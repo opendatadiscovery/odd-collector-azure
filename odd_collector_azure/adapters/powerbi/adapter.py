@@ -18,7 +18,7 @@ class Adapter(AbstractAdapter):
 
         self.__oddrn_generator = PowerBiGenerator(
             azure_cloud_settings={
-                "domain": "provectus.com"
+                "domain": config.domain
             }
         )
 
