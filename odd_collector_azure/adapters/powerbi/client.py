@@ -5,7 +5,7 @@ from typing import Dict, Any, List
 from odd_models.models import DataEntity
 from .domain.dataset import Dataset
 from .domain.dashboard import Dashboard
-from .mappers.datasources import datasources_factory
+from .mappers.datasources import datasources_factory, map_datasource
 from urllib.parse import urlparse, parse_qs
 
 
@@ -91,8 +91,9 @@ class PowerBiClient:
         for datasource_node in datasources_nodes:
             datasource_type = datasource_node["datasourceType"]
             datasource_engine = datasources_factory.get(datasource_type)
-            datasource_entity = datasource_engine(datasource_node).map_database()
-            datasources_entities.append(datasource_entity)
+            builder = datasource_engine(datasource_node)
+            entity = map_datasource(builder)
+            datasources_entities.append(entity)
         return datasources_entities
 
     async def enrich_datasets_with_datasources_oddrns(
