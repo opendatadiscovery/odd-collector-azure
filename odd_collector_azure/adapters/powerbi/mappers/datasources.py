@@ -1,82 +1,65 @@
-from oddrn_generator.generators import (
-    OdbcGenerator,
-    MssqlGenerator,
-    PostgresqlGenerator,
-    Generator,
-)
 from typing import Dict, Any, Type, List
 from odd_models.models import DataEntity, DataEntityType
-from abc import abstractmethod
+from oddrn_generator.utils.external_generators import (
+    ExternalPostgresGenerator,
+    ExternalMssqlGenerator,
+    ExternalDbSettings,
+    ExternalGeneratorBuilder,
+)
 
 
-class DatasourceEngine:
+class PowerBiExternalGeneratorBuilder(ExternalGeneratorBuilder):
     def __init__(self, datasource_node: Dict[str, Any]):
         self.connection_details: Dict[str, str] = datasource_node.get(
             "connectionDetails"
         )
 
-    datasource_type: str
-    generator: Type[Generator]
+    host_key: str
+    db_name_key: str
 
-    @abstractmethod
-    def get_database_oddrn(self) -> str:
-        pass
-
-    @abstractmethod
-    def map_database(self) -> DataEntity:
-        pass
-
-
-class JdbcDatasourceEngine(DatasourceEngine):
-    def get_database_oddrn(self) -> str:
-        gen = self.generator(
-            host_settings=f"{self.connection_details['server']}",
-            databases=self.connection_details["database"],
-        )
-        return gen.get_data_source_oddrn()
-
-    def map_database(self) -> DataEntity:
-        return DataEntity(
-            name=self.connection_details["database"],
-            oddrn=self.get_database_oddrn(),
-            type=DataEntityType.DATABASE_SERVICE,
+    def build_db_settings(self) -> ExternalDbSettings:
+        return ExternalDbSettings(
+            host=self.connection_details[self.host_key],
+            database_name=self.connection_details[self.db_name_key],
         )
 
 
-class OdbcDatasourceEngine(DatasourceEngine):
-    datasource_type = "ODBC"
-    generator = OdbcGenerator
-
-    def get_database_oddrn(self) -> str:
-        gen = self.generator(
-            host_settings=f"{self.connection_details['connectionString']}",
-            databases="database",
-        )
-        return gen.get_data_source_oddrn()
-
-    def map_database(self) -> DataEntity:
-        return DataEntity(
-            name="database",
-            oddrn=self.get_database_oddrn(),
-            type=DataEntityType.DATABASE_SERVICE,
-        )
+class JdbcEngine(PowerBiExternalGeneratorBuilder):
+    host_key = "server"
+    db_name_key = "database"
 
 
-class MssqlEngine(JdbcDatasourceEngine):
-    datasource_type = "Sql"
-    generator = MssqlGenerator
+class OdbcEngine(PowerBiExternalGeneratorBuilder):
+    host_key = "connectionString"
+    db_name_key = "connectionString"
+    type = "ODBC"
+    external_generator = ExternalMssqlGenerator
 
 
-class PostgresSqlEngine(JdbcDatasourceEngine):
-    datasource_type = "PostgreSql"
-    generator = PostgresqlGenerator
+class MssqlEngine(JdbcEngine):
+    type = "Sql"
+    external_generator = ExternalMssqlGenerator
 
 
-datasources: List[Type[DatasourceEngine]] = [
+class PostgresSqlEngine(JdbcEngine):
+    type = "PostgreSql"
+    external_generator = ExternalPostgresGenerator
+
+
+datasources: List[Type[PowerBiExternalGeneratorBuilder]] = [
     MssqlEngine,
     PostgresSqlEngine,
-    OdbcDatasourceEngine,
+    OdbcEngine,
 ]
-datasources_factory: Dict[str, Type[DatasourceEngine]] = {
-    datasource.datasource_type: datasource for datasource in datasources
+datasources_factory: Dict[str, Type[PowerBiExternalGeneratorBuilder]] = {
+    datasource.type: datasource for datasource in datasources
 }
+
+
+def map_datasource(builder: PowerBiExternalGeneratorBuilder):
+    external_generator = builder.get_external_generator()
+    db_name = builder.connection_details[builder.db_name_key]
+    oddrn = external_generator.get_generator_for_database_lvl().get_oddrn_by_path(
+        external_generator.database_path_name
+    )
+    return DataEntity(name=db_name, oddrn=oddrn, type=DataEntityType.DATABASE_SERVICE)
