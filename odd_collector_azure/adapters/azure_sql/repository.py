@@ -88,19 +88,20 @@ class AzureSQLRepository:
             Database={database};
             Uid={username};
             Pwd={password};
-            Encrypt=yes;
-            TrustServerCertificate=no;
-            Connection Timeout=30;
+            Encrypt={encrypt};
+            TrustServerCertificate={trust_server_certificate};
+            Connection Timeout={connection_timeout};
             '''.format(
                 driver='{ODBC Driver 18 for SQL Server}',
                 database=self.config.database,
                 server='{server_name}.database.windows.net,{port}'.format(server_name=self.config.server, port=self.config.port),
                 username=self.config.username,
-                password=self.config.password
+                password=self.config.password,
+                encrypt=self.config.encrypt,
+                trust_server_certificate=self.config.trust_server_certificate,
+                connection_timeout=self.config.connection_timeout
             )
         )
-        self._connection: pyodbc.Connection = pyodbc.connect(self.connection_string)
-        self._cursor: pyodbc.Cursor = self._connection.cursor()
 
     def get_tables(self) -> Iterable[Table]:
         """Get table metadata."""
@@ -165,12 +166,11 @@ class AzureSQLRepository:
 
     def _fetch_all(self, query: str) -> List[dict]:
         """Fetch data from DB and convert it to the dictionary as {column_name: value}."""
-        self._cursor.execute(query)
-        columns = [column[0] for column in self._cursor.description]
-        results = []
-        for row in self._cursor.fetchall():
-            results.append(dict(zip(columns, row)))
-        return results
-
-    def __del__(self):
-        self._connection.close()
+        with pyodbc.connect(self.connection_string) as connection:
+            with connection.cursor() as cursor:
+                cursor.execute(query)
+                columns = [column[0] for column in cursor.description]
+                results = []
+                for row in cursor.fetchall():
+                    results.append(dict(zip(columns, row)))
+                return results

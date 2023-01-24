@@ -1,11 +1,12 @@
 from typing import List
 
 from odd_models.models import DataEntity, DataEntityGroup, DataEntityType
-from oddrn_generator import MysqlGenerator
+
+from ..generator import AzureSQLGenerator
 
 
 def map_database(
-    generator: MysqlGenerator, service_name: str, entities: List[str]
+    generator: AzureSQLGenerator, service_name: str, entities: List[str]
 ) -> DataEntity:
     """
     :param generator - generator

@@ -1,14 +1,14 @@
-from oddrn_generator import MysqlGenerator
 from odd_models.models import DataEntity, DataEntityType, DataSet, DataTransformer
 
 from typing import Iterable, List, Optional
 
+from ..generator import AzureSQLGenerator
 from .models import ColumnMetadata
 from ..domain import Dependency, DependencyType, View
 from .columns import map_column
 
 
-def map_view(generator: MysqlGenerator, view: View) -> DataEntity:
+def map_view(generator: AzureSQLGenerator, view: View) -> DataEntity:
 
     generator.set_oddrn_paths(views=view.name)
 
@@ -31,7 +31,7 @@ def map_view(generator: MysqlGenerator, view: View) -> DataEntity:
 
 
 def _map_dependency(
-    generator: MysqlGenerator, deps: Optional[List[Dependency]]
+    generator: AzureSQLGenerator, deps: Optional[List[Dependency]]
 ) -> Iterable[str]:
 
     for dependency in deps:

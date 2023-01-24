@@ -1,19 +1,4 @@
 from typing import Any, NamedTuple
-from dataclasses import dataclass
-
-
-@dataclass
-class TableMetadata:
-    table_catalog: Any
-    table_schema: Any
-    table_name: Any
-    table_type: Any
-    create_date: Any
-    modify_date: Any
-    type_desc: Any
-    row_count: Any
-    view_definition: Any
-    referenced_entity_name: Any
 
 
 class ColumnMetadata(NamedTuple):

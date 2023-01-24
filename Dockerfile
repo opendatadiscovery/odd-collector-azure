@@ -1,6 +1,6 @@
 FROM python:3.9-slim-bullseye as base
 ENV POETRY_HOME=/etc/poetry \
-    POETRY_VERSION=1.2.1
+    POETRY_VERSION=1.3.1
 ENV PATH="$POETRY_HOME/bin:$VENV_PATH/bin:$PATH"
 
 FROM base AS build
@@ -33,7 +33,6 @@ COPY --from=build mssql-release.list mssql-release.list
 ENV ACCEPT_EULA=Y
 RUN apt-get update -y && apt-get install -y gnupg2
 RUN apt-key add microsoft.asc && rm microsoft.asc && mv mssql-release.list /etc/apt/sources.list.d/mssql-release.list
-RUN apt-get update -y
 RUN apt-get install -y curl
 RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
 RUN curl https://packages.microsoft.com/config/ubuntu/20.04/prod.list > /etc/apt/sources.list.d/mssql-release.list

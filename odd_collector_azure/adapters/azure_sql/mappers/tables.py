@@ -1,12 +1,12 @@
 from odd_models.models import DataEntity, DataEntityType, DataSet
-from oddrn_generator import MysqlGenerator
 
+from ..generator import AzureSQLGenerator
 from .columns import map_column
 from ..domain import Table
 from .models import ColumnMetadata
 
 
-def map_table(generator: MysqlGenerator, table: Table) -> DataEntity:
+def map_table(generator: AzureSQLGenerator, table: Table) -> DataEntity:
     generator.set_oddrn_paths(tables=table.name)
 
     return DataEntity(

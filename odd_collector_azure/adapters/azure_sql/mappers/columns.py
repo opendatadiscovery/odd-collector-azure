@@ -1,13 +1,14 @@
 from odd_models.models import DataSetField, DataSetFieldType, Type, MetadataExtension
-from oddrn_generator import MysqlGenerator
 
-from .metadata import convert_bytes_to_str, _data_set_field_metadata_schema_url
+from odd_collector_azure.helpers.bytes_to_str import convert_bytes_to_str
+from ..generator import AzureSQLGenerator
+from .metadata import _data_set_field_metadata_schema_url
 from .models import ColumnMetadata
 from .types import TYPES_SQL_TO_ODD
 
 
 def map_column(
-    generator: MysqlGenerator, column_path: str, column: ColumnMetadata
+    generator: AzureSQLGenerator, column_path: str, column: ColumnMetadata
 ) -> DataSetField:
     """
     Maps column to DataSetField

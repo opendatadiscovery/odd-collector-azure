@@ -1,10 +1,10 @@
-import logging
 from funcy import concat, lpluck_attr
 
 from odd_collector_sdk.domain.adapter import AbstractAdapter
 from odd_models.models import DataEntityList
-from oddrn_generator import MysqlGenerator
 
+from .generator import AzureSQLGenerator
+from .logger import logger
 from .mappers.tables import map_table
 from .repository import AzureSQLRepository
 from .mappers.views import map_view
@@ -15,7 +15,7 @@ class Adapter(AbstractAdapter):
     def __init__(self, config) -> None:
         self.__config = config
         self.__azure_sql_repository = AzureSQLRepository(config)
-        self.__oddrn_generator = MysqlGenerator(
+        self.__oddrn_generator = AzureSQLGenerator(
             host_settings=f"{self.__config.server}.database.windows.net:{self.__config.port}",
             databases=self.__config.database
         )
@@ -41,5 +41,5 @@ class Adapter(AbstractAdapter):
                 items=tables_entities + views_entities + [database_entity],
             )
         except Exception as err:
-            logging.error(f"Failed to load metadata for tables: {err}")
-            logging.exception(Exception)
+            logger.error(f"Failed to load metadata for tables: {err}")
+            logger.exception(Exception)
