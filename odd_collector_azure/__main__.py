@@ -1,6 +1,7 @@
 import asyncio
 import logging
 import os
+from pathlib import Path
 
 from odd_collector_sdk.collector import Collector
 
@@ -10,19 +11,19 @@ logging.basicConfig(
     level=os.getenv("LOGLEVEL", "INFO"),
     format="[%(asctime)s] %(levelname)s in %(name)s: %(message)s",
 )
-logger = logging.getLogger("odd-collector")
+logger = logging.getLogger("odd-collector-azure")
 
 
 try:
 
     loop = asyncio.get_event_loop()
 
-    cur_dirname = os.path.dirname(os.path.realpath(__file__))
-    config_path = os.path.join(cur_dirname, "../collector_config.yaml")
-    adapters_path = os.path.join(cur_dirname, "adapters")
+    cur_dirname = Path(os.path.realpath(__file__)).parent
+    config_path = cur_dirname.parents[0].joinpath("collector_config.yaml")
+    adapters_path = cur_dirname.joinpath("adapters")
 
     collector = Collector(
-        config_path=config_path,
+        config_path=str(config_path),
         root_package="odd_collector_azure.adapters",
         plugin_factory=PLUGIN_FACTORY,
     )
