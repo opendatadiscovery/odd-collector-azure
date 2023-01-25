@@ -18,13 +18,13 @@ try:
 
     loop = asyncio.get_event_loop()
 
-    cur_dirname = Path(__file__).parent
-    config_path = cur_dirname.parents[0].joinpath("collector_config.yaml")
-    adapters_path = cur_dirname.joinpath("adapters")
+    config_path = Path().cwd() / os.getenv("CONFIG_PATH", "collector_config.yaml")
+
+    root_package = "odd_collector_azure.adapters"
 
     collector = Collector(
         config_path=str(config_path),
-        root_package="odd_collector_azure.adapters",
+        root_package=root_package,
         plugin_factory=PLUGIN_FACTORY,
     )
 
