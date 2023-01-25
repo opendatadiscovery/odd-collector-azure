@@ -15,4 +15,19 @@ class PowerBiPlugin(AzurePlugin):
     type: Literal["powerbi"]
 
 
-PLUGIN_FACTORY: PluginFactory = {"powerbi": PowerBiPlugin}
+class AzureSQLPlugin(Plugin):
+    type: Literal["azure_sql"]
+    database: str
+    server: str
+    port: str
+    username: str
+    password: str
+    encrypt: str = 'yes'  # default value
+    trust_server_certificate: str = 'no'  # default value
+    connection_timeout: str = '30'  # default value
+
+
+PLUGIN_FACTORY: PluginFactory = {
+    "powerbi": PowerBiPlugin,
+    "azure_sql": AzureSQLPlugin
+}
