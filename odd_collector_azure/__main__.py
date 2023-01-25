@@ -18,7 +18,7 @@ try:
 
     loop = asyncio.get_event_loop()
 
-    cur_dirname = Path(os.path.realpath(__file__)).parent
+    cur_dirname = Path(__file__).parent
     config_path = cur_dirname.parents[0].joinpath("collector_config.yaml")
     adapters_path = cur_dirname.joinpath("adapters")
 
