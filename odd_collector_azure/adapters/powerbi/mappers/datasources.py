@@ -1,10 +1,11 @@
-from typing import Dict, Any, Type, List
+from typing import Any, Dict, List, Type
+
 from odd_models.models import DataEntity, DataEntityType
 from oddrn_generator.utils.external_generators import (
-    ExternalPostgresGenerator,
-    ExternalMssqlGenerator,
     ExternalDbSettings,
     ExternalGeneratorBuilder,
+    ExternalMssqlGenerator,
+    ExternalPostgresGenerator,
 )
 
 

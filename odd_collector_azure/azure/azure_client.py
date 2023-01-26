@@ -1,7 +1,9 @@
-from odd_collector_azure.domain.plugin import AzurePlugin
-from typing import Dict, Any, NamedTuple, Optional, List
-from aiohttp import ClientSession
 from asyncio import gather
+from typing import Any, Dict, List, NamedTuple, Optional
+
+from aiohttp import ClientSession
+
+from odd_collector_azure.domain.plugin import AzurePlugin
 
 
 class RequestArgs(NamedTuple):
