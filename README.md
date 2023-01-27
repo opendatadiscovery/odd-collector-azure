@@ -11,9 +11,10 @@ To learn more about collector types and ODD Platform's architecture, [read the d
  - [Docker compose example](#docker-compose-example)
 
 ## Implemented adapters
-| Service | Config example                          |
-|---------|-----------------------------------------|
-| PowerBi | [config](config_examples/power_bi.yaml) |
+| Service  | Config example                           |
+|----------|------------------------------------------|
+| PowerBi  | [config](config_examples/power_bi.yaml)  |
+| AzureSQL | [config](config_examples/azure_sql.yaml) |
 
 
 
