@@ -1,12 +1,15 @@
+from typing import Any, Dict, List
+from urllib.parse import parse_qs, urlparse
+
+from aiohttp import ClientSession
+from odd_models.models import DataEntity
+
 from odd_collector_azure.azure.azure_client import AzureClient, RequestArgs
 from odd_collector_azure.domain.plugin import PowerBiPlugin
-from aiohttp import ClientSession
-from typing import Dict, Any, List
-from odd_models.models import DataEntity
-from .domain.dataset import Dataset
+
 from .domain.dashboard import Dashboard
+from .domain.dataset import Dataset
 from .mappers.datasources import datasources_factory, map_datasource
-from urllib.parse import urlparse, parse_qs
 
 
 class PowerBiClient:

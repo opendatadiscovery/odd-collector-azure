@@ -1,12 +1,14 @@
+from typing import Dict, List, Type
+
 from odd_collector_sdk.domain.adapter import AbstractAdapter
-from odd_models.models import DataEntityList
-from typing import Type, List, Dict
-from odd_collector_azure.domain.plugin import PowerBiPlugin
-from .client import PowerBiClient
-from .mappers.datasets import map_dataset
-from .mappers.dashboards import map_dashboard
+from odd_models.models import DataEntity, DataEntityList
 from oddrn_generator.generators import PowerBiGenerator
-from odd_models.models import DataEntity
+
+from odd_collector_azure.domain.plugin import PowerBiPlugin
+
+from .client import PowerBiClient
+from .mappers.dashboards import map_dashboard
+from .mappers.datasets import map_dataset
 
 
 class Adapter(AbstractAdapter):

@@ -1,12 +1,13 @@
-from oddrn_generator.generators import PowerBiGenerator
 from odd_models.models import (
+    DataConsumer,
     DataEntity,
     DataEntityType,
-    DataConsumer,
     MetadataExtension,
 )
-from odd_collector_azure.adapters.powerbi.domain.dataset import Dataset
+from oddrn_generator.generators import PowerBiGenerator
+
 from odd_collector_azure.adapters.powerbi import _METADATA_SCHEMA_URL_PREFIX
+from odd_collector_azure.adapters.powerbi.domain.dataset import Dataset
 
 
 def map_dataset(
