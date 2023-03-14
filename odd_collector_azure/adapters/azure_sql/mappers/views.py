@@ -1,8 +1,8 @@
 from odd_models.models import DataEntity, DataEntityType, DataSet, DataTransformer
 
 from typing import Iterable, List, Optional
+from oddrn_generator import AzureSQLGenerator
 
-from ..generator import AzureSQLGenerator
 from .models import ColumnMetadata
 from ..domain import Dependency, DependencyType, View
 from .columns import map_column

@@ -1,6 +1,6 @@
 from odd_models.models import DataEntity, DataEntityType, DataSet
 
-from ..generator import AzureSQLGenerator
+from oddrn_generator import AzureSQLGenerator
 from .columns import map_column
 from ..domain import Table
 from .models import ColumnMetadata

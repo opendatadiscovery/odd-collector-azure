@@ -2,7 +2,7 @@ from typing import List
 
 from odd_models.models import DataEntity, DataEntityGroup, DataEntityType
 
-from ..generator import AzureSQLGenerator
+from oddrn_generator import AzureSQLGenerator
 
 
 def map_database(
