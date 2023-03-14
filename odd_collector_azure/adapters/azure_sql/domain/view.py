@@ -11,6 +11,7 @@ class View:
     name: str
     columns: List[dict]
     view_definition: str
+    schema: str
     description: str
     upstream: List[Dependency]
     downstream: List[Dependency]

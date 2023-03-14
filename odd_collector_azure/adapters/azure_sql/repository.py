@@ -116,6 +116,7 @@ class AzureSQLRepository:
                 modify_date=row['modify_date'].replace(tzinfo=pytz.utc).isoformat(),
                 row_count=row['row_count'],
                 description=row['type_desc'],
+                schema=row['table_schema']
             )
             yield table
 
@@ -136,6 +137,7 @@ class AzureSQLRepository:
                 columns=self.get_columns(view.get('table_name')),
                 view_definition=view.get('VIEW_DEFINITION'),
                 description='',
+                schema=view.get('table_schema'),
                 upstream=[],
                 downstream=[],
             )

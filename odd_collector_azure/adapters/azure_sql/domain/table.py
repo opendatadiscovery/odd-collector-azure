@@ -10,6 +10,7 @@ class Table:
     row_count: int
     columns: List[dict]
     description: Optional[str]
+    schema: str
 
     @property
     def metadata(self) -> Dict[str, Any]:

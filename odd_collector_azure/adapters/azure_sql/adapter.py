@@ -2,8 +2,8 @@ from funcy import concat, lpluck_attr
 
 from odd_collector_sdk.domain.adapter import AbstractAdapter
 from odd_models.models import DataEntityList
+from oddrn_generator import AzureSQLGenerator
 
-from .generator import AzureSQLGenerator
 from .logger import logger
 from .mappers.tables import map_table
 from .repository import AzureSQLRepository
