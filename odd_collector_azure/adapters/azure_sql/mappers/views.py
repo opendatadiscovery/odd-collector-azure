@@ -1,4 +1,5 @@
 from typing import Iterable, List, Optional
+from oddrn_generator import AzureSQLGenerator
 
 from odd_models.models import DataEntity, DataEntityType, DataSet, DataTransformer
 
@@ -10,7 +11,7 @@ from .models import ColumnMetadata
 
 def map_view(generator: AzureSQLGenerator, view: View) -> DataEntity:
 
-    generator.set_oddrn_paths(views=view.name)
+    generator.set_oddrn_paths(schemas=view.schema, views=view.name)
 
     return DataEntity(
         oddrn=generator.get_oddrn_by_path("views"),

@@ -1,8 +1,8 @@
 from odd_models.models import DataSetField, DataSetFieldType, MetadataExtension, Type
 
 from odd_collector_azure.helpers.bytes_to_str import convert_bytes_to_str
+from oddrn_generator import AzureSQLGenerator
 
-from ..generator import AzureSQLGenerator
 from .metadata import _data_set_field_metadata_schema_url
 from .models import ColumnMetadata
 from .types import TYPES_SQL_TO_ODD
