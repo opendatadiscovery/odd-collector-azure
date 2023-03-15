@@ -16,7 +16,7 @@ class Adapter(AbstractAdapter):
         self.__azure_sql_repository = AzureSQLRepository(config)
         self.__oddrn_generator = AzureSQLGenerator(
             host_settings=(
-                f"{self.__config.server}.database.windows.net:{self.__config.port}"
+                f"{self.__config.server}:{self.__config.port}"
             ),
             databases=self.__config.database,
         )

@@ -92,7 +92,7 @@ class AzureSQLRepository:
             """.format(
                 driver="{ODBC Driver 18 for SQL Server}",
                 database=self.config.database,
-                server="{server_name}.database.windows.net,{port}".format(
+                server="{server_name},{port}".format(
                     server_name=self.config.server, port=self.config.port
                 ),
                 username=self.config.username,
