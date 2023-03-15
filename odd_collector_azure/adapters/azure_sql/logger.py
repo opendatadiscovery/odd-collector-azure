@@ -1,3 +1,3 @@
 import logging
 
-logger = logging.getLogger('azure')
+logger = logging.getLogger("azure")

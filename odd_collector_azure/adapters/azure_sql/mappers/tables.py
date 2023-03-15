@@ -1,8 +1,9 @@
 from odd_models.models import DataEntity, DataEntityType, DataSet
 
 from oddrn_generator import AzureSQLGenerator
-from .columns import map_column
+
 from ..domain import Table
+from .columns import map_column
 from .models import ColumnMetadata
 
 
@@ -21,6 +22,6 @@ def map_table(generator: AzureSQLGenerator, table: Table) -> DataEntity:
             field_list=[
                 map_column(generator, "tables_columns", ColumnMetadata(**column))
                 for column in table.columns
-            ]
+            ],
         ),
     )

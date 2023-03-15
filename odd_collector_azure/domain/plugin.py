@@ -1,4 +1,5 @@
 from typing import Literal
+
 from odd_collector_sdk.domain.plugin import Plugin
 from odd_collector_sdk.types import PluginFactory
 
@@ -22,12 +23,9 @@ class AzureSQLPlugin(Plugin):
     port: str
     username: str
     password: str
-    encrypt: str = 'yes'  # default value
-    trust_server_certificate: str = 'no'  # default value
-    connection_timeout: str = '30'  # default value
+    encrypt: str = "yes"  # default value
+    trust_server_certificate: str = "no"  # default value
+    connection_timeout: str = "30"  # default value
 
 
-PLUGIN_FACTORY: PluginFactory = {
-    "powerbi": PowerBiPlugin,
-    "azure_sql": AzureSQLPlugin
-}
+PLUGIN_FACTORY: PluginFactory = {"powerbi": PowerBiPlugin, "azure_sql": AzureSQLPlugin}

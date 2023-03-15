@@ -1,14 +1,13 @@
 from funcy import concat, lpluck_attr
-
 from odd_collector_sdk.domain.adapter import AbstractAdapter
 from odd_models.models import DataEntityList
 from oddrn_generator import AzureSQLGenerator
 
 from .logger import logger
-from .mappers.tables import map_table
-from .repository import AzureSQLRepository
-from .mappers.views import map_view
 from .mappers.database import map_database
+from .mappers.tables import map_table
+from .mappers.views import map_view
+from .repository import AzureSQLRepository
 
 
 class Adapter(AbstractAdapter):
@@ -16,8 +15,10 @@ class Adapter(AbstractAdapter):
         self.__config = config
         self.__azure_sql_repository = AzureSQLRepository(config)
         self.__oddrn_generator = AzureSQLGenerator(
-            host_settings=f"{self.__config.server}.database.windows.net:{self.__config.port}",
-            databases=self.__config.database
+            host_settings=(
+                f"{self.__config.server}.database.windows.net:{self.__config.port}"
+            ),
+            databases=self.__config.database,
         )
 
     def get_data_source_oddrn(self) -> str:
@@ -26,15 +27,21 @@ class Adapter(AbstractAdapter):
     def get_data_entity_list(self) -> DataEntityList:
         try:
             views_entities = [
-                map_view(self.__oddrn_generator, view) for view in self.__azure_sql_repository.get_views()
+                map_view(self.__oddrn_generator, view)
+                for view in self.__azure_sql_repository.get_views()
             ]
 
             tables_entities = [
-                map_table(self.__oddrn_generator, table) for table in self.__azure_sql_repository.get_tables()
+                map_table(self.__oddrn_generator, table)
+                for table in self.__azure_sql_repository.get_tables()
             ]
 
-            list_of_oddrns = lpluck_attr("oddrn", concat(tables_entities, views_entities))
-            database_entity = map_database(self.__oddrn_generator, self.__config.database, list_of_oddrns)
+            list_of_oddrns = lpluck_attr(
+                "oddrn", concat(tables_entities, views_entities)
+            )
+            database_entity = map_database(
+                self.__oddrn_generator, self.__config.database, list_of_oddrns
+            )
 
             return DataEntityList(
                 data_source_oddrn=self.get_data_source_oddrn(),

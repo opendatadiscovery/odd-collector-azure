@@ -1,11 +1,12 @@
-from odd_models.models import DataEntity, DataEntityType, DataSet, DataTransformer
-
 from typing import Iterable, List, Optional
 from oddrn_generator import AzureSQLGenerator
 
-from .models import ColumnMetadata
+from odd_models.models import DataEntity, DataEntityType, DataSet, DataTransformer
+
 from ..domain import Dependency, DependencyType, View
+from ..generator import AzureSQLGenerator
 from .columns import map_column
+from .models import ColumnMetadata
 
 
 def map_view(generator: AzureSQLGenerator, view: View) -> DataEntity:
