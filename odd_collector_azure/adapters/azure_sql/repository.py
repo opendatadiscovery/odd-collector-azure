@@ -110,13 +110,13 @@ class AzureSQLRepository:
 
         for row in result:
             table = Table(
-                name=row['table_name'],
-                columns=self.get_columns(row.get('table_name')),
-                create_date=row['create_date'].replace(tzinfo=pytz.utc).isoformat(),
-                modify_date=row['modify_date'].replace(tzinfo=pytz.utc).isoformat(),
-                row_count=row['row_count'],
-                description=row['type_desc'],
-                schema=row['table_schema']
+                name=row["table_name"],
+                columns=self.get_columns(row.get("table_name")),
+                create_date=row["create_date"].replace(tzinfo=pytz.utc).isoformat(),
+                modify_date=row["modify_date"].replace(tzinfo=pytz.utc).isoformat(),
+                row_count=row["row_count"],
+                description=row["type_desc"],
+                schema=row["table_schema"],
             )
             yield table
 
@@ -132,12 +132,12 @@ class AzureSQLRepository:
         dependencies = self.get_view_dependencies()
 
         views: Dict[str, View] = {
-            view.get('table_name'): View(
-                name=view.get('table_name'),
-                columns=self.get_columns(view.get('table_name')),
-                view_definition=view.get('VIEW_DEFINITION'),
-                description='',
-                schema=view.get('table_schema'),
+            view.get("table_name"): View(
+                name=view.get("table_name"),
+                columns=self.get_columns(view.get("table_name")),
+                view_definition=view.get("VIEW_DEFINITION"),
+                description="",
+                schema=view.get("table_schema"),
                 upstream=[],
                 downstream=[],
             )

@@ -1,7 +1,7 @@
 from typing import Iterable, List, Optional
-from oddrn_generator import AzureSQLGenerator
 
 from odd_models.models import DataEntity, DataEntityType, DataSet, DataTransformer
+from oddrn_generator import AzureSQLGenerator
 
 from ..domain import Dependency, DependencyType, View
 from .columns import map_column
@@ -9,7 +9,6 @@ from .models import ColumnMetadata
 
 
 def map_view(generator: AzureSQLGenerator, view: View) -> DataEntity:
-
     generator.set_oddrn_paths(schemas=view.schema, views=view.name)
 
     return DataEntity(
@@ -33,7 +32,6 @@ def map_view(generator: AzureSQLGenerator, view: View) -> DataEntity:
 def _map_dependency(
     generator: AzureSQLGenerator, deps: Optional[List[Dependency]]
 ) -> Iterable[str]:
-
     for dependency in deps:
         if dependency.referenced_type == DependencyType.TABLE:
             yield generator.get_oddrn_by_path("tables", dependency.referenced_name)

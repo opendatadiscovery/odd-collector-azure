@@ -15,9 +15,7 @@ class Adapter(AbstractAdapter):
         self.__config = config
         self.__azure_sql_repository = AzureSQLRepository(config)
         self.__oddrn_generator = AzureSQLGenerator(
-            host_settings=(
-                f"{self.__config.server}:{self.__config.port}"
-            ),
+            host_settings=f"{self.__config.server}:{self.__config.port}",
             databases=self.__config.database,
         )
 
