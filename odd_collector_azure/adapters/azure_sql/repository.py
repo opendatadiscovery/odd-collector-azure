@@ -49,7 +49,8 @@ COLUMNS_METADATA_QUERY = """
         left join INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE t
             on
                 c.table_name = t.table_name and
-                c.column_name = t.column_name
+                c.column_name = t.column_name and
+                t.constraint_name like 'PK%'
     where c.table_schema <> 'sys' and c.table_name = '{table_name}'
 """
 
