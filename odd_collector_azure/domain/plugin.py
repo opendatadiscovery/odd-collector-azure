@@ -23,9 +23,9 @@ class AzureSQLPlugin(Plugin):
     port: str
     username: str
     password: str
-    encrypt: str = "yes"  # default value
-    trust_server_certificate: str = "no"  # default value
-    connection_timeout: str = "30"  # default value
+    encrypt: str = "yes"
+    trust_server_certificate: str = "no"
+    connection_timeout: str = "30"
 
 
 PLUGIN_FACTORY: PluginFactory = {"powerbi": PowerBiPlugin, "azure_sql": AzureSQLPlugin}

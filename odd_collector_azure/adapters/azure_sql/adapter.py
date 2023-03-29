@@ -41,10 +41,12 @@ class Adapter(AbstractAdapter):
                 self.__oddrn_generator, self.__config.database, list_of_oddrns
             )
 
-            return DataEntityList(
+            data_entity_list = DataEntityList(
                 data_source_oddrn=self.get_data_source_oddrn(),
                 items=tables_entities + views_entities + [database_entity],
             )
+
+            return data_entity_list
         except Exception as err:
             logger.error(f"Failed to load metadata for tables: {err}")
             logger.exception(Exception)

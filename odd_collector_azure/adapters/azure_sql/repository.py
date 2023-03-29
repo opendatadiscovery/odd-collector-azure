@@ -124,6 +124,7 @@ class AzureSQLRepository:
         """Get columns metadata."""
         query = COLUMNS_METADATA_QUERY.format(table_name=table_name)
         columns = self._fetch_all(query)
+
         return columns
 
     def get_views(self) -> Iterable[View]:
