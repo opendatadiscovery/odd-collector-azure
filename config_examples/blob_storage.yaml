@@ -1,0 +1,16 @@
+default_pulling_interval: 10
+token: ""
+platform_host_url: http://localhost:8080
+plugins:
+  - type: blob_storage
+    name: blob_storage_adapter
+    # Use only connection string or account_name with account key.
+    connection_string: # get it from the `access keys` tab in your storage account.
+    account_name: storage account name
+    account_key: # get it from the `access keys` tab in your storage account.
+    datasets:
+      - containers: container name
+        prefix: /
+        file_filter:
+          include: []
+          exclude: []
