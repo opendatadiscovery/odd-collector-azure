@@ -17,11 +17,11 @@ def map_file(file: File, generator: BlobGenerator) -> DataEntity:
 
     SCHEMA_FILE_URL = (
         "https://raw.githubusercontent.com/opendatadiscovery/opendatadiscovery-specification/"
-        "main/specification/extensions/s3.json"
+        "main/specification/extensions/azure_blob_storage.json"
     )
     metadata = [
         {
-            "schema_url": f"{SCHEMA_FILE_URL}#/definitions/S3DataSetExtension",
+            "schema_url": f"{SCHEMA_FILE_URL}#/definitions/AzureBlobStorageDataSetExtension",
             "metadata": file.metadata,
         }
     ]

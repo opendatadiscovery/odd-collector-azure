@@ -51,7 +51,7 @@ TYPE_MAP: dict[str, Type] = {
 }
 
 parser = Lark.open(
-    "grammar/s3_field_type_grammar.lark", rel_to=__file__, parser="lalr", start="type"
+    "grammar/blob_storage_field_type_grammar.lark", rel_to=__file__, parser="lalr", start="type"
 )
 
 

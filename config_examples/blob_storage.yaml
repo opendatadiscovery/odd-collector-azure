@@ -11,6 +11,10 @@ plugins:
     datasets:
       - containers: container name
         prefix: /
+        # These fields expect regular expression.
+        # Examples:
+        # 1. include/exclude files which start with some name: "some_name.*.csv"
+        # 2. include/exclude files which end with some name: ".*some_name.csv"
         file_filter:
           include: []
           exclude: []

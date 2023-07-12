@@ -64,7 +64,7 @@ TYPE_MAP: Dict[str, Type] = {
 }
 field_type_transformer = AzureFieldTypeTransformer()
 parser = Lark.open(
-    "grammar/s3_field_type_grammar.lark", rel_to=__file__, parser="lalr", start="type"
+    "grammar/blob_storage_field_type_grammar.lark", rel_to=__file__, parser="lalr", start="type"
 )
 
 
@@ -95,7 +95,7 @@ def map_dataset(
     oddrn_gen.set_oddrn_paths(keys=name)
     metadata = [
         {
-            "schema_url": f"{SCHEMA_FILE_URL}#/definitions/S3DataSetExtension",
+            "schema_url": f"{SCHEMA_FILE_URL}#/definitions/AzureBlobStorageDataSetExtension",
             "metadata": s3_dataset.metadata,
         }
     ]
