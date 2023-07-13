@@ -1,7 +1,9 @@
-from typing import Literal
+from typing import Literal, Optional
+from pydantic import SecretStr
 
 from odd_collector_sdk.domain.plugin import Plugin
 from odd_collector_sdk.types import PluginFactory
+from odd_collector_azure.adapters.blob_storage.dataset_config import DatasetConfig
 
 
 class AzurePlugin(Plugin):
@@ -28,4 +30,16 @@ class AzureSQLPlugin(Plugin):
     connection_timeout: str = "30"
 
 
-PLUGIN_FACTORY: PluginFactory = {"powerbi": PowerBiPlugin, "azure_sql": AzureSQLPlugin}
+class BlobPlugin(Plugin):
+    type: Literal["blob_storage"]
+    account_name: str
+    account_key: Optional[SecretStr]
+    connection_string: Optional[SecretStr]
+    datasets: list[DatasetConfig]
+
+
+PLUGIN_FACTORY: PluginFactory = {
+    "powerbi": PowerBiPlugin,
+    "azure_sql": AzureSQLPlugin,
+    "blob_storage": BlobPlugin,
+}
