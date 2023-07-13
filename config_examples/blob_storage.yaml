@@ -4,11 +4,14 @@ platform_host_url: http://localhost:8080
 plugins:
   - type: blob_storage
     name: blob_storage_adapter
-    # Use only connection string or account_name with account key.
+    # Use only connection string or account key.
     connection_string: # get it from the `access keys` tab in your storage account.
-    account_name: storage account name
     account_key: # get it from the `access keys` tab in your storage account.
+    account_name: storage account name
     datasets:
+      - containers: container name
+      - containers: container name
+        prefix: /
       - containers: container name
         prefix: /
         # These fields expect regular expression.

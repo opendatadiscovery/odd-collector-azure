@@ -1,4 +1,5 @@
-from typing import Literal
+from typing import Literal, Optional
+from pydantic import SecretStr
 
 from odd_collector_sdk.domain.plugin import Plugin
 from odd_collector_sdk.types import PluginFactory
@@ -32,8 +33,8 @@ class AzureSQLPlugin(Plugin):
 class BlobPlugin(Plugin):
     type: Literal["blob_storage"]
     account_name: str
-    account_key: str
-    connection_string: str
+    account_key: Optional[SecretStr]
+    connection_string: Optional[SecretStr]
     datasets: list[DatasetConfig]
 
 

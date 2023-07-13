@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Union, Callable
 
 import pyarrow.dataset as ds
 from adlfs import AzureBlobFileSystem
@@ -18,19 +18,18 @@ class FileSystem:
     """
 
     def __init__(self, config: BlobPlugin):
-        self.config = config
         params = {}
         if config.connection_string:
-            params["connection_string"] = config.connection_string
+            params["connection_string"] = config.connection_string.get_secret_value()
         if not params.get("connection_string"):
             if config.account_name:
                 params["account_name"] = config.account_name
             if config.account_key:
-                params["account_key"] = config.account_key
+                params["account_key"] = config.account_key.get_secret_value()
 
         self.fs = AzureBlobFileSystem(**params)
 
-    def get_file_info(self, path: str, file_filter) -> list[FileInfo]:
+    def get_file_info(self, path: str, file_filter: Callable[[str], bool]) -> list[FileInfo]:
         """
         Get file info from path.
         @param path: blob path to file or folder
@@ -41,6 +40,7 @@ class FileSystem:
             lambda obj: obj['type'] == 'directory' or file_filter(obj["name"].rsplit("/", 1)[-1]),
             file_info
         ))
+        logger.debug(f"Filtered file info: {filtered_file_info}")
         return filtered_file_info
 
     def get_dataset(self, file_path: str, format: str) -> ds.Dataset:
@@ -50,6 +50,7 @@ class FileSystem:
         @param format: Should be one of available formats: https://arrow.apache.org/docs/python/api/dataset.html#file-format
         @return: Dataset
         """
+        logger.debug(f"Getting dataset by path: {file_path}")
         return ds.dataset(source=file_path, filesystem=self.fs, format=format)
 
     def get_folder_as_file(self, dataset_config: DatasetConfig) -> File:
@@ -100,7 +101,7 @@ class FileSystem:
 
         return container
 
-    def list_objects(self, path: str, file_filter) -> list[Union[File, Folder]]:
+    def list_objects(self, path: str, file_filter: Callable[[str], bool]) -> list[Union[File, Folder]]:
         """
         Recursively get objects for path.
         @param path: blob path
@@ -126,6 +127,7 @@ class FileSystem:
         @param file_name: file name
         @return: File
         """
+        logger.debug(f"Getting File with schema and metadata by path: {path}")
         if not file_name:
             file_name = path.split("/")[-1]
 
@@ -147,11 +149,12 @@ class FileSystem:
                 file_format="unknown",
             )
 
-    def get_folder(self, path: str, file_filter, recursive: bool = True) -> Folder:
+    def get_folder(self, path: str, file_filter: Callable[[str], bool], recursive: bool = True) -> Folder:
         """
         Get Folder with objects recursively.
         @param path: blob path to
         @return: Folder class with objects and path
         """
+        logger.debug(f"Getting Folder with objects recursively by path: {path}")
         objects = self.list_objects(path, file_filter) if recursive else []
         return Folder(path, objects)

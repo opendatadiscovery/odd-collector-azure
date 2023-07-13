@@ -1,4 +1,1 @@
-import logging
-
-
-logger = logging.getLogger("blob_storage")
+from odd_collector_sdk.logger import logger
