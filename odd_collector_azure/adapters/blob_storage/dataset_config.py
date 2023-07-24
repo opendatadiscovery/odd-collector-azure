@@ -1,6 +1,5 @@
 from typing import Optional
 
-from odd_collector_sdk.domain.filter import Filter
 from pydantic import BaseModel
 
 
@@ -16,17 +15,13 @@ class FolderAsDataset(BaseModel):
 
 
 class DatasetConfig(BaseModel):
-    containers: str
+    container: str
     prefix: Optional[str]
     folder_as_dataset: Optional[FolderAsDataset] = None
-    file_filter: Optional[Filter] = Filter()
 
     @property
     def full_path(self) -> str:
-        containers = self.containers.strip("/")
+        container = self.container.strip("/")
         prefix = self.prefix
 
-        return f"{containers}/{prefix.strip('/')}" if prefix else containers
-
-    def allow(self, name: str) -> bool:
-        return self.file_filter.is_allowed(name)
+        return f"{container}/{prefix.strip('/')}" if prefix else container

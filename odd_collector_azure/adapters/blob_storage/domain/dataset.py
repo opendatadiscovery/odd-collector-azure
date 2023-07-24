@@ -1,10 +1,10 @@
 from typing import Dict, Union
 
 import pyarrow.dataset as ds
+from oddrn_generator import AzureBlobStorageGenerator
 from pyarrow._csv import ParseOptions
 from pyarrow._dataset import CsvFileFormat, FileFormat
 
-from odd_collector_azure.adapters.blob_storage.blob_generator import BlobGenerator
 from odd_collector_azure.adapters.blob_storage.mapper.dataset import map_dataset
 from odd_collector_azure.adapters.blob_storage.parse_azure_url import parse_azure_url
 from odd_collector_azure.adapters.blob_storage.to_data_entity import ToDataEntity
@@ -70,7 +70,7 @@ class BlobDataset(ToDataEntity):
     def add_metadata(self, metadata: Dict[str, str]):
         self._metadata.update(metadata)
 
-    def to_data_entity(self, oddrn_generator: BlobGenerator):
+    def to_data_entity(self, oddrn_generator: AzureBlobStorageGenerator):
         return map_dataset(self, oddrn_generator)
 
     @classmethod
