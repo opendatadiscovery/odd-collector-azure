@@ -12,8 +12,8 @@ from .column import map_columns
 
 
 def map_file(file: File, generator: AzureBlobStorageGenerator) -> DataEntity:
-    container, *keys = file.path.split("/")
-    generator.set_oddrn_paths(keys="/".join(keys))
+    _, keys = file.path.split("/", 1)
+    generator.set_oddrn_paths(keys=keys)
 
     SCHEMA_FILE_URL = (
         "https://raw.githubusercontent.com/opendatadiscovery/opendatadiscovery-specification/"
@@ -44,8 +44,8 @@ def map_file(file: File, generator: AzureBlobStorageGenerator) -> DataEntity:
 def map_folder(
     folder: Folder, generator: AzureBlobStorageGenerator
 ) -> tuple[str, deque[DataEntity]]:
-    container, *keys = folder.path.split("/")
-    generator.set_oddrn_paths(keys="/".join(keys))
+    _, keys = folder.path.split("/", 1)
+    generator.set_oddrn_paths(keys=keys)
 
     res = deque()
     data_entity = DataEntity(

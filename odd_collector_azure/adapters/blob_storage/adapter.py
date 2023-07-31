@@ -22,13 +22,10 @@ class Adapter(BaseAdapter):
     def create_generator(self) -> Generator:
         return AzureBlobStorageGenerator(
             azure_cloud_settings={
-                'account_name': self.config.account_name,
-                'container_name': self.config.dataset_config.container
+                'account': self.config.account_name,
+                'container': self.config.dataset_config.container
             }
         )
-
-    def get_data_source_oddrn(self) -> str:
-        return self.generator.get_data_source_oddrn()
 
     def get_data_entity_list(self) -> Iterable[DataEntityList]:
         logger.debug(f"Getting data entities for {self.config.dataset_config.container} container")
