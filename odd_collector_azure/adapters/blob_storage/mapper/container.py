@@ -1,8 +1,8 @@
 from collections import deque
 
 from odd_models import DataEntity, DataEntityGroup, DataEntityType, DataSet
+from oddrn_generator import AzureBlobStorageGenerator
 
-from odd_collector_azure.adapters.blob_storage.blob_generator import BlobGenerator
 from odd_collector_azure.adapters.blob_storage.domain.models import (
     Container,
     File,
@@ -11,9 +11,9 @@ from odd_collector_azure.adapters.blob_storage.domain.models import (
 from .column import map_columns
 
 
-def map_file(file: File, generator: BlobGenerator) -> DataEntity:
-    container, *keys = file.path.split("/")
-    generator.set_oddrn_paths(containers=container, keys="/".join(keys))
+def map_file(file: File, generator: AzureBlobStorageGenerator) -> DataEntity:
+    _, keys = file.path.split("/", 1)
+    generator.set_oddrn_paths(keys=keys)
 
     SCHEMA_FILE_URL = (
         "https://raw.githubusercontent.com/opendatadiscovery/opendatadiscovery-specification/"
@@ -42,10 +42,10 @@ def map_file(file: File, generator: BlobGenerator) -> DataEntity:
 
 
 def map_folder(
-    folder: Folder, generator: BlobGenerator
+    folder: Folder, generator: AzureBlobStorageGenerator
 ) -> tuple[str, deque[DataEntity]]:
-    container, *keys = folder.path.split("/")
-    generator.set_oddrn_paths(containers=container, keys="/".join(keys))
+    _, keys = folder.path.split("/", 1)
+    generator.set_oddrn_paths(keys=keys)
 
     res = deque()
     data_entity = DataEntity(
@@ -71,9 +71,8 @@ def map_folder(
 
 
 def map_container(
-    account_name: str, container: Container, generator: BlobGenerator
+    container: Container, generator: AzureBlobStorageGenerator
 ) -> deque[DataEntity]:
-    generator.set_oddrn_paths(storages=account_name)
 
     res = deque()
     data_entity = DataEntity(

@@ -27,6 +27,7 @@ class FileSystem:
             if config.account_key:
                 params["account_key"] = config.account_key.get_secret_value()
 
+        self.config = config
         self.fs = AzureBlobFileSystem(**params)
 
     def get_file_info(self, path: str, file_filter: Callable[[str], bool]) -> list[FileInfo]:
@@ -83,19 +84,19 @@ class FileSystem:
             format=dataset_config.folder_as_dataset.file_format,
         )
 
-    def get_container(self, dataset_config: DatasetConfig) -> Container:
+    def get_container(self) -> Container:
         """
         Get container with all related objects.
         @param dataset_config:
         @return: Container
         """
-        container = Container(dataset_config.containers)
-        if dataset_config.folder_as_dataset:
-            container.objects.append(self.get_folder_as_file(dataset_config))
+        container = Container(self.config.dataset_config.container)
+        if self.config.dataset_config.folder_as_dataset:
+            container.objects.append(self.get_folder_as_file(self.config.dataset_config))
         else:
             objects = self.list_objects(
-                path=dataset_config.full_path,
-                file_filter=dataset_config.allow
+                path=self.config.dataset_config.full_path,
+                file_filter=self.config.file_filter.is_allowed
             )
             container.objects.extend(objects)
 

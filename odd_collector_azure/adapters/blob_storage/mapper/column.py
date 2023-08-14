@@ -3,9 +3,9 @@ from typing import Any
 from funcy import lflatten
 from lark import Lark
 from odd_models.models import DataSetField, DataSetFieldType, Type
+from oddrn_generator import AzureBlobStorageGenerator
 from pyarrow import Schema
 
-from odd_collector_azure.adapters.blob_storage.blob_generator import BlobGenerator
 from odd_collector_azure.adapters.blob_storage.mapper.azure_file_type_transformer import (
     field_type_transformer,
 )
@@ -65,7 +65,7 @@ def parse(field_type: str) -> dict[str, Any]:
 
 
 def map_column(
-    generator: BlobGenerator,
+    generator: AzureBlobStorageGenerator,
     type_parsed: dict[str, Any],
     column_name: str = None,
     parent_oddrn: str = None,
@@ -152,7 +152,7 @@ def map_column(
     return result
 
 
-def map_columns(schema: Schema, generator: BlobGenerator) -> list[DataSetField]:
+def map_columns(schema: Schema, generator: AzureBlobStorageGenerator) -> list[DataSetField]:
     columns = [
         map_column(generator, parse(str(field.type)), field.name) for field in schema
     ]

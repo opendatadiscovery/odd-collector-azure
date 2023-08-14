@@ -1,8 +1,10 @@
 from typing import Literal, Optional
-from pydantic import SecretStr
 
+from odd_collector_sdk.domain.filter import Filter
 from odd_collector_sdk.domain.plugin import Plugin
 from odd_collector_sdk.types import PluginFactory
+from pydantic import SecretStr, validator
+
 from odd_collector_azure.adapters.blob_storage.dataset_config import DatasetConfig
 
 
@@ -35,7 +37,14 @@ class BlobPlugin(Plugin):
     account_name: str
     account_key: Optional[SecretStr]
     connection_string: Optional[SecretStr]
-    datasets: list[DatasetConfig]
+    file_filter: Optional[Filter] = Filter()
+    dataset_config: DatasetConfig
+    datasets: Optional[list[DatasetConfig]] = None
+
+    @validator("datasets", pre=True)
+    def validate_datasets(cls, v):
+        if v:
+            raise ValueError("datasets field is deprecated, use dataset_config instead")
 
 
 PLUGIN_FACTORY: PluginFactory = {

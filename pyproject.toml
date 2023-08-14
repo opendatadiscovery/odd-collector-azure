@@ -9,10 +9,10 @@ repository = "https://github.com/opendatadiscovery/odd-collector-azure"
 
 [tool.poetry.dependencies]
 python = "^3.9"
-oddrn-generator = "^0.1.73"
+oddrn-generator = "^0.1.92"
 pyhumps = "3.0.2"
 more-itertools = "8.10.0"
-odd-collector-sdk = "^0.3.31"
+odd-collector-sdk = "^0.3.42"
 funcy = "2.0"
 pyodbc = "^4.0.35"
 odd-models = "^2.0.24"
