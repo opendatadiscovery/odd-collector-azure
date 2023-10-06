@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from azure.mgmt.datafactory.models import PipelineResource, Factory, Activity, Resource
+from azure.mgmt.datafactory.models import Activity, Factory, PipelineResource, Resource
 from funcy import omit
 from odd_collector_sdk.utils.metadata import HasMetadata
 

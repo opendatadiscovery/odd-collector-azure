@@ -2,6 +2,7 @@ from azure.identity import DefaultAzureCredential
 from azure.mgmt.datafactory import DataFactoryManagementClient
 
 from odd_collector_azure.domain.plugin import DataFactoryPlugin
+
 from .domain import ADFPipeline, DataFactory
 from .logger import logger
 
@@ -17,8 +18,8 @@ class DataFactoryClient:
 
     def get_pipelines(self, factory: str) -> list[ADFPipeline]:
         pipeline_resources = self.client.pipelines.list_by_factory(
-            resource_group_name=self.resource_group,
-            factory_name=factory)
+            resource_group_name=self.resource_group, factory_name=factory
+        )
 
         return [ADFPipeline(pipeline) for pipeline in pipeline_resources]
 
@@ -29,4 +30,3 @@ class DataFactoryClient:
         )
 
         return DataFactory(factory_resource)
-
