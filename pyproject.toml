@@ -25,6 +25,7 @@ adlfs = "^2023.4.0"
 dask = "^2023.6.0"
 lark = "^1.1.5"
 azure-datalake-store = "^0.0.53"
+azure-mgmt-datafactory = "^3.1.0"
 
 [tool.poetry.group.dev.dependencies]
 isort = "^5.12.0"
