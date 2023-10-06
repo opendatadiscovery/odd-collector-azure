@@ -27,7 +27,6 @@ class DataFactory(MetadataMixin, HasMetadata):
 @dataclass
 class ADFPipeline(MetadataMixin, HasMetadata):
     resource: PipelineResource
-    # excluded_properties = ("name", "activities", "parameters", "policy")
     excluded_properties = ("name",)
 
     @property
@@ -38,5 +37,8 @@ class ADFPipeline(MetadataMixin, HasMetadata):
 @dataclass
 class ADFActivity(MetadataMixin, HasMetadata):
     resource: Activity
-    # excluded_properties = ("name", "policy", "inputs", "outputs", "typeProperties", "dataset", "store_settings")
     excluded_properties = ("name",)
+
+    @property
+    def depends_on(self):
+        return self.resource.depends_on

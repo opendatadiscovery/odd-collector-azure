@@ -1,7 +1,3 @@
-from collections import defaultdict
-from functools import partial
-from typing import Iterable, Union
-
 from odd_collector_sdk.domain.adapter import BaseAdapter
 from odd_models import DataEntity
 from odd_models.models import DataEntityList
@@ -20,7 +16,7 @@ from .mapper.pipeline import map_pipeline
 
 class Adapter(BaseAdapter):
     config: DataFactoryPlugin
-    generator: Union[Generator, AzureDataFactoryGenerator]
+    generator: AzureDataFactoryGenerator
 
     def __init__(self, config: DataFactoryPlugin):
         self.client = DataFactoryClient(config)

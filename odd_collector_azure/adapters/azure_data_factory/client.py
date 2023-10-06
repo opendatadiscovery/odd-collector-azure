@@ -4,7 +4,6 @@ from azure.mgmt.datafactory import DataFactoryManagementClient
 from odd_collector_azure.domain.plugin import DataFactoryPlugin
 
 from .domain import ADFPipeline, DataFactory
-from .logger import logger
 
 
 class DataFactoryClient:
