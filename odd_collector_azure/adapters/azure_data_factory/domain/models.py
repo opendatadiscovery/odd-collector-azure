@@ -1,9 +1,16 @@
 from collections import defaultdict
 from dataclasses import dataclass
 
-from azure.mgmt.datafactory.models import Activity, Factory, PipelineResource, Resource
+from azure.mgmt.datafactory.models import (
+    Activity,
+    ActivityRun,
+    Factory,
+    PipelineResource,
+    Resource,
+)
 from funcy import omit
 from odd_collector_sdk.utils.metadata import HasMetadata
+from odd_models import JobRunStatus
 
 
 class MetadataMixin:
@@ -57,3 +64,33 @@ class ADFActivity(MetadataMixin, HasMetadata):
                 for dependency in activity.depends_on:
                     dependency_map[dependency.activity].append(activity.name)
         return dependency_map
+
+
+@dataclass
+class ADFActivityRun(MetadataMixin, HasMetadata):
+    resource: ActivityRun
+    excluded_properties = ("name",)
+
+    @property
+    def id(self):
+        return self.resource.activity_run_id
+
+    @property
+    def activity_name(self):
+        return self.resource.activity_name
+
+    @property
+    def start_time(self):
+        return self.resource.activity_run_start
+
+    @property
+    def end_time(self):
+        return self.resource.activity_run_end
+
+    @property
+    def status(self):
+        return (
+            JobRunStatus.SUCCESS
+            if self.resource.status == "Succeeded"
+            else JobRunStatus.FAILED
+        )

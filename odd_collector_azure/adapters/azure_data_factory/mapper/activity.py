@@ -8,8 +8,7 @@ from ..utils import ADFMetadataEncoder
 
 
 def map_activity(
-    oddrn_generator: AzureDataFactoryGenerator,
-    activity: ADFActivity,
+    oddrn_generator: AzureDataFactoryGenerator, activity: ADFActivity
 ) -> DataEntity:
     inputs = [
         oddrn_generator.get_oddrn_by_path("activities", act) for act in activity.inputs
