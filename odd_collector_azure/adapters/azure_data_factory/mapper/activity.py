@@ -1,4 +1,3 @@
-from azure.mgmt.datafactory.models import ActivityDependency
 from odd_collector_sdk.utils.metadata import DefinitionType, extract_metadata
 from odd_models import DataEntity, DataEntityType, DataTransformer
 from oddrn_generator import AzureDataFactoryGenerator
@@ -12,8 +11,11 @@ def map_activity(
     oddrn_generator: AzureDataFactoryGenerator,
     activity: ADFActivity,
 ) -> DataEntity:
-    dependencies = [
-        get_dependency_oddrn(oddrn_generator, dep) for dep in activity.depends_on
+    inputs = [
+        oddrn_generator.get_oddrn_by_path("activities", act) for act in activity.inputs
+    ]
+    outputs = [
+        oddrn_generator.get_oddrn_by_path("activities", act) for act in activity.outputs
     ]
     return DataEntity(
         oddrn=oddrn_generator.get_oddrn_by_path("activities", activity.name),
@@ -29,11 +31,5 @@ def map_activity(
                 json_encoder=ADFMetadataEncoder,
             )
         ],
-        data_transformer=DataTransformer(inputs=dependencies, outputs=[]),
+        data_transformer=DataTransformer(inputs=inputs, outputs=outputs),
     )
-
-
-def get_dependency_oddrn(
-    generator: AzureDataFactoryGenerator, dependency: ActivityDependency
-) -> str:
-    return generator.get_oddrn_by_path("activities", dependency.activity)

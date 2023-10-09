@@ -1,3 +1,4 @@
+from collections import defaultdict
 from dataclasses import dataclass
 
 from azure.mgmt.datafactory.models import Activity, Factory, PipelineResource, Resource
@@ -37,8 +38,22 @@ class ADFPipeline(MetadataMixin, HasMetadata):
 @dataclass
 class ADFActivity(MetadataMixin, HasMetadata):
     resource: Activity
+    all_activities: list[Activity]
     excluded_properties = ("name",)
 
     @property
-    def depends_on(self):
-        return self.resource.depends_on
+    def inputs(self) -> list[str]:
+        return [dep.activity for dep in self.resource.depends_on]
+
+    @property
+    def outputs(self) -> list[str]:
+        dependency_map = self._build_dependency_map()
+        return dependency_map.get(self.resource.name, [])
+
+    def _build_dependency_map(self):
+        dependency_map = defaultdict(list)
+        for activity in self.all_activities:
+            if activity.depends_on:
+                for dependency in activity.depends_on:
+                    dependency_map[dependency.activity].append(activity.name)
+        return dependency_map

@@ -38,7 +38,10 @@ class Adapter(BaseAdapter):
             pipelines = self.client.get_pipelines(factory.name)
             for pipeline in pipelines:
                 self.generator.set_oddrn_paths(pipelines=pipeline.name)
-                activities = [ADFActivity(act) for act in pipeline.activities]
+                activities = [
+                    ADFActivity(act, all_activities=pipeline.activities)
+                    for act in pipeline.activities
+                ]
                 activities_entities_tmp = [
                     map_activity(self.generator, activity) for activity in activities
                 ]
