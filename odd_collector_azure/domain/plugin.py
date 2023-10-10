@@ -52,6 +52,7 @@ class DataFactoryPlugin(Plugin):
     subscription: str
     resource_group: str
     factory: str
+    pipeline_filter: Filter = Filter()
 
 
 PLUGIN_FACTORY: PluginFactory = {

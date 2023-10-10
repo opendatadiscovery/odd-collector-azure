@@ -37,7 +37,9 @@ class Adapter(BaseAdapter):
         try:
             self.generator.set_oddrn_paths(factories=self.config.factory)
             factory = self.client.get_factory()
-            pipelines = self.client.get_pipelines(factory.name)
+            pipelines = self.client.get_pipelines(
+                factory.name, self.config.pipeline_filter
+            )
             for pipeline in pipelines:
                 activities_entities_tmp = []
                 self.generator.set_oddrn_paths(pipelines=pipeline.name)
@@ -50,7 +52,7 @@ class Adapter(BaseAdapter):
                 for activity in activities:
                     self.generator.set_oddrn_paths(activities=activity.name)
                     runs = activities_runs[activity.name]
-                    activities_entities_tmp.append(
+                    activities_entities_tmp.extend(
                         map_activity(self.generator, activity)
                     )
                     activities_runs_entities.extend(

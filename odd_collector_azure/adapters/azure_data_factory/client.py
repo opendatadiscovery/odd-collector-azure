@@ -3,6 +3,8 @@ from datetime import datetime
 
 from azure.identity import DefaultAzureCredential
 from azure.mgmt.datafactory import DataFactoryManagementClient
+from azure.mgmt.datafactory.models import PipelineResource
+from odd_collector_sdk.domain.filter import Filter
 
 from odd_collector_azure.domain.plugin import DataFactoryPlugin
 
@@ -18,12 +20,18 @@ class DataFactoryClient:
         self.resource_group = config.resource_group
         self.factory = config.factory
 
-    def get_pipelines(self, factory: str) -> list[ADFPipeline]:
-        pipeline_resources = self.client.pipelines.list_by_factory(
+    def get_pipelines(self, factory: str, filter_: Filter) -> list[ADFPipeline]:
+        pipeline_resources: list[
+            PipelineResource
+        ] = self.client.pipelines.list_by_factory(
             resource_group_name=self.resource_group, factory_name=factory
         )
 
-        return [ADFPipeline(pipeline) for pipeline in pipeline_resources]
+        return [
+            ADFPipeline(pipeline)
+            for pipeline in pipeline_resources
+            if filter_.is_allowed(pipeline.name)
+        ]
 
     def get_factory(self) -> DataFactory:
         factory_resource = self.client.factories.get(
@@ -36,7 +44,7 @@ class DataFactoryClient:
     def get_activity_runs(
         self, pipeline_name: str
     ) -> defaultdict[str, list[ADFActivityRun]]:
-        start_timestamp = ("2010-01-01T00:00:00.0000000Z",)
+        start_timestamp = "2010-01-01T00:00:00.0000000Z"
         activity_runs = defaultdict(list)
         pipeline_runs = self.client.pipeline_runs.query_by_factory(
             resource_group_name=self.resource_group,

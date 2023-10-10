@@ -1,5 +1,5 @@
 from collections import defaultdict
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from azure.mgmt.datafactory.models import (
     Activity,
@@ -45,7 +45,7 @@ class ADFPipeline(MetadataMixin, HasMetadata):
 @dataclass
 class ADFActivity(MetadataMixin, HasMetadata):
     resource: Activity
-    all_activities: list[Activity]
+    all_activities: list[Activity] = field(default_factory=list)
     excluded_properties = ("name",)
 
     @property
@@ -56,6 +56,13 @@ class ADFActivity(MetadataMixin, HasMetadata):
     def outputs(self) -> list[str]:
         dependency_map = self._build_dependency_map()
         return dependency_map.get(self.resource.name, [])
+
+    @property
+    def activities(self):
+        activities = (
+            self.resource.activities if hasattr(self.resource, "activities") else None
+        )
+        return activities
 
     def _build_dependency_map(self):
         dependency_map = defaultdict(list)
