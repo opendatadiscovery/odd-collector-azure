@@ -1,6 +1,6 @@
 from funcy import lpluck_attr
 from odd_collector_sdk.utils.metadata import DefinitionType, extract_metadata
-from odd_models import DataEntity, DataEntityGroup, DataEntityType
+from odd_models import DataEntity, DataEntityGroup, DataEntityType, DataTransformer
 from oddrn_generator import AzureDataFactoryGenerator
 
 from odd_collector_azure.adapters.azure_data_factory.domain import ADFPipeline
@@ -29,6 +29,7 @@ def map_pipeline(
         data_entity_group=DataEntityGroup(
             entities_list=lpluck_attr("oddrn", activities)
         ),
+        data_transformer=DataTransformer(inputs=[], outputs=[]),
     )
 
     return pipeline_entity

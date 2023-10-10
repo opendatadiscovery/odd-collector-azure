@@ -8,7 +8,7 @@ from odd_collector_sdk.domain.filter import Filter
 
 from odd_collector_azure.domain.plugin import DataFactoryPlugin
 
-from .domain import ADFActivityRun, ADFPipeline, DataFactory
+from .domain import ADFActivityRun, ADFPipeline, ADFPipelineRun, DataFactory
 
 
 class DataFactoryClient:
@@ -75,3 +75,27 @@ class DataFactoryClient:
                 activity_runs[run.activity_name].append(ADFActivityRun(run))
 
         return activity_runs
+
+    def get_pipeline_runs(self, pipeline_name: str) -> list[ADFPipelineRun]:
+        start_timestamp = "2010-01-01T00:00:00.0000000Z"
+        pipeline_runs = defaultdict(list)
+        runs = self.client.pipeline_runs.query_by_factory(
+            resource_group_name=self.resource_group,
+            factory_name=self.factory,
+            filter_parameters={
+                "filters": [
+                    {
+                        "operand": "PipelineName",
+                        "operator": "Equals",
+                        "values": [pipeline_name],
+                    }
+                ],
+                "lastUpdatedAfter": start_timestamp,
+                "lastUpdatedBefore": datetime.now(),
+            },
+        ).value
+
+        # for run in runs:
+        #     pipeline_runs[run.pipeline_name].append(ADFPipelineRun(run))
+
+        return [ADFPipelineRun(run) for run in runs]

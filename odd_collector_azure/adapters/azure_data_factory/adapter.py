@@ -13,6 +13,7 @@ from .mapper.activity import map_activity
 from .mapper.activity_run import map_activity_run
 from .mapper.factory import map_factory
 from .mapper.pipeline import map_pipeline
+from .mapper.pipeline_run import map_pipeline_run
 
 
 class Adapter(BaseAdapter):
@@ -32,6 +33,7 @@ class Adapter(BaseAdapter):
 
     def get_data_entity_list(self) -> DataEntityList:
         pipelines_entities: list[DataEntity] = []
+        pipelines_runs_entities: list[DataEntity] = []
         activities_entities: list[DataEntity] = []
         activities_runs_entities: list[DataEntity] = []
         try:
@@ -43,6 +45,11 @@ class Adapter(BaseAdapter):
             for pipeline in pipelines:
                 activities_entities_tmp = []
                 self.generator.set_oddrn_paths(pipelines=pipeline.name)
+                pipelines_runs = self.client.get_pipeline_runs(pipeline.name)
+                pipelines_runs_entities.extend(
+                    [map_pipeline_run(self.generator, run) for run in pipelines_runs]
+                )
+
                 activities = [
                     ADFActivity(act, all_activities=pipeline.activities)
                     for act in pipeline.activities
@@ -70,6 +77,7 @@ class Adapter(BaseAdapter):
                 items=[
                     *activities_runs_entities,
                     *activities_entities,
+                    *pipelines_runs_entities,
                     *pipelines_entities,
                     factory_entity,
                 ],

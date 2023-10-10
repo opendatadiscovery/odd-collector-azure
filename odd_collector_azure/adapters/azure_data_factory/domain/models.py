@@ -6,6 +6,7 @@ from azure.mgmt.datafactory.models import (
     ActivityRun,
     Factory,
     PipelineResource,
+    PipelineRun,
     Resource,
 )
 from funcy import omit
@@ -40,6 +41,36 @@ class ADFPipeline(MetadataMixin, HasMetadata):
     @property
     def activities(self) -> list[Activity]:
         return self.resource.activities
+
+
+@dataclass
+class ADFPipelineRun(MetadataMixin, HasMetadata):
+    resource: PipelineRun
+    excluded_properties = ("name",)
+
+    @property
+    def id(self):
+        return self.resource.run_id
+
+    @property
+    def pipeline_name(self):
+        return self.resource.pipeline_name
+
+    @property
+    def start_time(self):
+        return self.resource.run_start
+
+    @property
+    def end_time(self):
+        return self.resource.run_end
+
+    @property
+    def status(self):
+        return (
+            JobRunStatus.SUCCESS
+            if self.resource.status == "Succeeded"
+            else JobRunStatus.FAILED
+        )
 
 
 @dataclass
