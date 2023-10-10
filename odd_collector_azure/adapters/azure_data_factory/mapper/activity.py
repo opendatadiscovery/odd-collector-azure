@@ -41,43 +41,29 @@ def map_activity(
         if hasattr(activity, "outputs") and activity.outputs
         else []
     )
+
+    entity = DataEntity(
+        oddrn=oddrn_generator.get_oddrn_by_path("activities", activity.name),
+        name=activity.name,
+        type=DataEntityType.JOB,
+        metadata=[
+            extract_metadata(
+                "azure_data_factory",
+                activity,
+                DefinitionType.DATASET,
+                jsonify=True,
+                flatten=True,
+                json_encoder=ADFMetadataEncoder,
+            )
+        ],
+        data_transformer=DataTransformer(inputs=inputs, outputs=outputs),
+    )
+
     if activities:
-        entity = DataEntity(
-            oddrn=oddrn_generator.get_oddrn_by_path("activities", activity.name),
-            name=activity.name,
-            type=DataEntityType.JOB,
-            metadata=[
-                extract_metadata(
-                    "azure_data_factory",
-                    activity,
-                    DefinitionType.DATASET,
-                    jsonify=True,
-                    flatten=True,
-                    json_encoder=ADFMetadataEncoder,
-                )
-            ],
-            data_entity_group=DataEntityGroup(
-                entities_list=lpluck_attr("oddrn", activities)
-            ),
-            data_transformer=DataTransformer(inputs=inputs, outputs=outputs),
+        entity.data_entity_group = DataEntityGroup(
+            entities_list=lpluck_attr("oddrn", activities)
         )
-    else:
-        entity = DataEntity(
-            oddrn=oddrn_generator.get_oddrn_by_path("activities", activity.name),
-            name=activity.name,
-            type=DataEntityType.JOB,
-            metadata=[
-                extract_metadata(
-                    "azure_data_factory",
-                    activity,
-                    DefinitionType.DATASET,
-                    jsonify=True,
-                    flatten=True,
-                    json_encoder=ADFMetadataEncoder,
-                )
-            ],
-            data_transformer=DataTransformer(inputs=inputs, outputs=outputs),
-        )
+
     entities.extend(activities)
     entities.append(entity)
 
