@@ -15,7 +15,7 @@ class DataFactoryClient:
     def __init__(self, config: DataFactoryPlugin):
         self.client = DataFactoryManagementClient(
             credential=DefaultAzureCredential(),
-            subscription_id="98e9f5da-db8f-4aa2-b8ab-4e71c999db01",
+            subscription_id=config.subscription,
         )
         self.resource_group = config.resource_group
         self.factory = config.factory
@@ -41,44 +41,8 @@ class DataFactoryClient:
 
         return DataFactory(factory_resource)
 
-    def get_activity_runs(
-        self, pipeline_name: str
-    ) -> defaultdict[str, list[ADFActivityRun]]:
-        start_timestamp = "2010-01-01T00:00:00.0000000Z"
-        activity_runs = defaultdict(list)
-        pipeline_runs = self.client.pipeline_runs.query_by_factory(
-            resource_group_name=self.resource_group,
-            factory_name=self.factory,
-            filter_parameters={
-                "filters": [
-                    {
-                        "operand": "PipelineName",
-                        "operator": "Equals",
-                        "values": [pipeline_name],
-                    }
-                ],
-                "lastUpdatedAfter": start_timestamp,
-                "lastUpdatedBefore": datetime.now(),
-            },
-        ).value
-        for pipeline_run in pipeline_runs:
-            runs = self.client.activity_runs.query_by_pipeline_run(
-                resource_group_name=self.resource_group,
-                factory_name=self.factory,
-                run_id=pipeline_run.run_id,
-                filter_parameters={
-                    "lastUpdatedAfter": start_timestamp,
-                    "lastUpdatedBefore": datetime.now(),
-                },
-            ).value
-            for run in runs:
-                activity_runs[run.activity_name].append(ADFActivityRun(run))
-
-        return activity_runs
-
     def get_pipeline_runs(self, pipeline_name: str) -> list[ADFPipelineRun]:
         start_timestamp = "2010-01-01T00:00:00.0000000Z"
-        pipeline_runs = defaultdict(list)
         runs = self.client.pipeline_runs.query_by_factory(
             resource_group_name=self.resource_group,
             factory_name=self.factory,
@@ -95,7 +59,25 @@ class DataFactoryClient:
             },
         ).value
 
-        # for run in runs:
-        #     pipeline_runs[run.pipeline_name].append(ADFPipelineRun(run))
-
         return [ADFPipelineRun(run) for run in runs]
+
+    def get_activity_runs(
+        self, pipeline_name: str
+    ) -> defaultdict[str, list[ADFActivityRun]]:
+        start_timestamp = "2010-01-01T00:00:00.0000000Z"
+        activity_runs = defaultdict(list)
+        pipeline_runs = self.get_pipeline_runs(pipeline_name)
+        for pipeline_run in pipeline_runs:
+            runs = self.client.activity_runs.query_by_pipeline_run(
+                resource_group_name=self.resource_group,
+                factory_name=self.factory,
+                run_id=pipeline_run.id,
+                filter_parameters={
+                    "lastUpdatedAfter": start_timestamp,
+                    "lastUpdatedBefore": datetime.now(),
+                },
+            ).value
+            for run in runs:
+                activity_runs[run.activity_name].append(ADFActivityRun(run))
+
+        return activity_runs

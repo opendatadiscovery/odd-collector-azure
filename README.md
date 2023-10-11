@@ -8,16 +8,23 @@ To learn more about collector types and ODD Platform's architecture, [read the d
 ## Preview
  - [Implemented adapters](#implemented-adapters)
  - [How to build](#building)
+ - [Azure Data Factory authentication](#azure-data-factory-authentication)
  - [Docker compose example](#docker-compose-example)
 
 ## Implemented adapters
-| Service  | Config example                           |
-|----------|------------------------------------------|
-| PowerBi  | [config](config_examples/power_bi.yaml)  |
-| AzureSQL | [config](config_examples/azure_sql.yaml) |
+| Service          | Config example                                    |
+|------------------|---------------------------------------------------|
+| PowerBi          | [config](config_examples/power_bi.yaml)           |
+| AzureSQL         | [config](config_examples/azure_sql.yaml)          |
+| BlobStorage      | [config](config_examples/blob_storage.yaml)       |
+| AzureDataFactory | [config](config_examples/azure_data_factory.yaml) |
 
-
-
+## Azure Data Factory authentication
+ADF adapter is using DefaultAzureCredential class for authentication.  
+By default, it requires following environmental variables: AZURE_TENANT_ID, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET.  
+Docs regarding class and variables: 
+[DefaultAzureCredential](https://learn.microsoft.com/en-us/python/api/azure-identity/azure.identity.defaultazurecredential?view=azure-python), 
+[EnvironmentCredential](https://learn.microsoft.com/en-us/python/api/azure-identity/azure.identity.environmentcredential?view=azure-python)
 ## Building
 ```bash
 docker build .
