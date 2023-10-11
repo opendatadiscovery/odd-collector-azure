@@ -16,7 +16,7 @@ from odd_models import JobRunStatus
 
 class MetadataMixin:
     resource: Resource
-    excluded_properties = ()
+    excluded_properties = ("name",)
 
     @property
     def name(self) -> str:
@@ -30,13 +30,11 @@ class MetadataMixin:
 @dataclass
 class DataFactory(MetadataMixin, HasMetadata):
     resource: Factory
-    excluded_properties = ("name",)
 
 
 @dataclass
 class ADFPipeline(MetadataMixin, HasMetadata):
     resource: PipelineResource
-    excluded_properties = ("name",)
 
     @property
     def activities(self) -> list[Activity]:
@@ -44,40 +42,9 @@ class ADFPipeline(MetadataMixin, HasMetadata):
 
 
 @dataclass
-class ADFPipelineRun(MetadataMixin, HasMetadata):
-    resource: PipelineRun
-    excluded_properties = ("name",)
-
-    @property
-    def id(self):
-        return self.resource.run_id
-
-    @property
-    def pipeline_name(self):
-        return self.resource.pipeline_name
-
-    @property
-    def start_time(self):
-        return self.resource.run_start
-
-    @property
-    def end_time(self):
-        return self.resource.run_end
-
-    @property
-    def status(self):
-        return (
-            JobRunStatus.SUCCESS
-            if self.resource.status == "Succeeded"
-            else JobRunStatus.FAILED
-        )
-
-
-@dataclass
 class ADFActivity(MetadataMixin, HasMetadata):
     resource: Activity
     all_activities: list[Activity] = field(default_factory=list)
-    excluded_properties = ("name",)
 
     @property
     def inputs(self) -> list[str]:
@@ -105,9 +72,37 @@ class ADFActivity(MetadataMixin, HasMetadata):
 
 
 @dataclass
+class ADFPipelineRun(MetadataMixin, HasMetadata):
+    resource: PipelineRun
+
+    @property
+    def id(self):
+        return self.resource.run_id
+
+    @property
+    def pipeline_name(self):
+        return self.resource.pipeline_name
+
+    @property
+    def start_time(self):
+        return self.resource.run_start
+
+    @property
+    def end_time(self):
+        return self.resource.run_end
+
+    @property
+    def status(self):
+        return (
+            JobRunStatus.SUCCESS
+            if self.resource.status == "Succeeded"
+            else JobRunStatus.FAILED
+        )
+
+
+@dataclass
 class ADFActivityRun(MetadataMixin, HasMetadata):
     resource: ActivityRun
-    excluded_properties = ("name",)
 
     @property
     def id(self):
