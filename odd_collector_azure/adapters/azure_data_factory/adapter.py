@@ -9,7 +9,6 @@ from odd_collector_azure.domain.plugin import DataFactoryPlugin
 
 from .client import DataFactoryClient
 from .domain import ADFActivity
-from .logger import logger
 from .mapper.activity import map_activity
 from .mapper.activity_run import map_activity_run
 from .mapper.factory import map_factory
