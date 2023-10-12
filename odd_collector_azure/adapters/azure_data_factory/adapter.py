@@ -27,7 +27,7 @@ class Adapter(BaseAdapter):
     def create_generator(self) -> Generator:
         return AzureDataFactoryGenerator(
             azure_cloud_settings={
-                "domain": self.config.subscription,
+                "domain": self.config.resource_group,
             }
         )
 
