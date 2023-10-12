@@ -1,4 +1,5 @@
 from odd_collector_sdk.domain.adapter import BaseAdapter
+from odd_collector_sdk.errors import DataSourceError, MappingDataError
 from odd_models import DataEntity
 from odd_models.models import DataEntityList
 from oddrn_generator import AzureDataFactoryGenerator
@@ -72,15 +73,19 @@ class Adapter(BaseAdapter):
 
             factory_entity = map_factory(self.generator, factory, pipelines_entities)
 
-            return DataEntityList(
-                data_source_oddrn=self.get_data_source_oddrn(),
-                items=[
-                    *activities_runs_entities,
-                    *activities_entities,
-                    *pipelines_runs_entities,
-                    *pipelines_entities,
-                    factory_entity,
-                ],
-            )
+        except DataSourceError:
+            raise
+
         except Exception as e:
-            logger.error(f"Error while processing: {e}." " SKIPPING.", exc_info=True)
+            raise MappingDataError(f"Error during mapping: {e}") from e
+
+        return DataEntityList(
+            data_source_oddrn=self.get_data_source_oddrn(),
+            items=[
+                *activities_runs_entities,
+                *activities_entities,
+                *pipelines_runs_entities,
+                *pipelines_entities,
+                factory_entity,
+            ],
+        )

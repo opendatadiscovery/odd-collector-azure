@@ -5,13 +5,29 @@ from azure.identity import DefaultAzureCredential
 from azure.mgmt.datafactory import DataFactoryManagementClient
 from azure.mgmt.datafactory.models import PipelineResource
 from odd_collector_sdk.domain.filter import Filter
+from odd_collector_sdk.errors import DataSourceError
 
 from odd_collector_azure.domain.plugin import DataFactoryPlugin
 
 from .domain import ADFActivityRun, ADFPipeline, ADFPipelineRun, DataFactory
 
 
+def handle_errors(func):
+    def wrapper(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except Exception as e:
+            raise DataSourceError(
+                f"Connection error during execution of {func.__name__}: {str(e)}"
+            ) from e
+
+    return wrapper
+
+
 class DataFactoryClient:
+    # timestamp required for runs requests, should be set to the date which allow to gather all required runs
+    start_timestamp = "2010-01-01T00:00:00.0000000Z"
+
     def __init__(self, config: DataFactoryPlugin):
         self.client = DataFactoryManagementClient(
             credential=DefaultAzureCredential(),
@@ -20,6 +36,7 @@ class DataFactoryClient:
         self.resource_group = config.resource_group
         self.factory = config.factory
 
+    @handle_errors
     def get_pipelines(self, factory: str, filter_: Filter) -> list[ADFPipeline]:
         pipeline_resources: list[
             PipelineResource
@@ -33,6 +50,7 @@ class DataFactoryClient:
             if filter_.is_allowed(pipeline.name)
         ]
 
+    @handle_errors
     def get_factory(self) -> DataFactory:
         factory_resource = self.client.factories.get(
             resource_group_name=self.resource_group,
@@ -41,8 +59,8 @@ class DataFactoryClient:
 
         return DataFactory(factory_resource)
 
+    @handle_errors
     def get_pipeline_runs(self, pipeline_name: str) -> list[ADFPipelineRun]:
-        start_timestamp = "2010-01-01T00:00:00.0000000Z"
         runs = self.client.pipeline_runs.query_by_factory(
             resource_group_name=self.resource_group,
             factory_name=self.factory,
@@ -54,17 +72,17 @@ class DataFactoryClient:
                         "values": [pipeline_name],
                     }
                 ],
-                "lastUpdatedAfter": start_timestamp,
+                "lastUpdatedAfter": self.start_timestamp,
                 "lastUpdatedBefore": datetime.now(),
             },
         ).value
 
         return [ADFPipelineRun(run) for run in runs]
 
+    @handle_errors
     def get_activity_runs(
         self, pipeline_name: str
     ) -> defaultdict[str, list[ADFActivityRun]]:
-        start_timestamp = "2010-01-01T00:00:00.0000000Z"
         activity_runs = defaultdict(list)
         pipeline_runs = self.get_pipeline_runs(pipeline_name)
         for pipeline_run in pipeline_runs:
@@ -73,7 +91,7 @@ class DataFactoryClient:
                 factory_name=self.factory,
                 run_id=pipeline_run.id,
                 filter_parameters={
-                    "lastUpdatedAfter": start_timestamp,
+                    "lastUpdatedAfter": self.start_timestamp,
                     "lastUpdatedBefore": datetime.now(),
                 },
             ).value

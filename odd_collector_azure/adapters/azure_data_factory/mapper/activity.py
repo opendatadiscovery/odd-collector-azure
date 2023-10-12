@@ -16,7 +16,7 @@ def map_activity(
     entities = deque()
     activities = deque()
 
-    if hasattr(activity, "activities") and activity.activities:
+    if activity.activities:
         for act in activity.activities:
             activities.extend(
                 map_activity(
@@ -25,22 +25,12 @@ def map_activity(
                 )
             )
 
-    inputs = (
-        [
-            oddrn_generator.get_oddrn_by_path("activities", act)
-            for act in activity.inputs
-        ]
-        if hasattr(activity, "inputs") and activity.inputs
-        else []
-    )
-    outputs = (
-        [
-            oddrn_generator.get_oddrn_by_path("activities", act)
-            for act in activity.outputs
-        ]
-        if hasattr(activity, "outputs") and activity.outputs
-        else []
-    )
+    inputs = [
+        oddrn_generator.get_oddrn_by_path("activities", act) for act in activity.inputs
+    ]
+    outputs = [
+        oddrn_generator.get_oddrn_by_path("activities", act) for act in activity.outputs
+    ]
 
     entity = DataEntity(
         oddrn=oddrn_generator.get_oddrn_by_path("activities", activity.name),
