@@ -1,9 +1,12 @@
+import re
 from collections import defaultdict
 from dataclasses import dataclass, field
 
 from azure.mgmt.datafactory.models import (
     Activity,
     ActivityRun,
+    DataFlow,
+    DataFlowResource,
     Factory,
     PipelineResource,
     PipelineRun,
@@ -12,6 +15,8 @@ from azure.mgmt.datafactory.models import (
 from funcy import omit
 from odd_collector_sdk.utils.metadata import HasMetadata
 from odd_models import JobRunStatus
+
+from ..utils import get_properties
 
 
 class MetadataMixin:
@@ -45,6 +50,7 @@ class ADFPipeline(MetadataMixin, HasMetadata):
 class ADFActivity(MetadataMixin, HasMetadata):
     resource: Activity
     all_activities: list[Activity] = field(default_factory=list)
+    dataflow: DataFlow = None
 
     @property
     def inputs(self) -> list[str]:
@@ -56,11 +62,23 @@ class ADFActivity(MetadataMixin, HasMetadata):
         return dependency_map.get(self.resource.name, [])
 
     @property
+    def type(self) -> str:
+        return self.resource.type
+
+    @property
     def activities(self):
         activities = (
             self.resource.activities if hasattr(self.resource, "activities") else None
         )
         return activities
+
+    @property
+    def odd_metadata(self) -> dict:
+        act_metadata = omit(self.resource.__dict__, self.excluded_properties)
+        if self.dataflow:
+            data_flow_metadata = get_properties(self.dataflow)
+            return act_metadata | data_flow_metadata
+        return act_metadata
 
     def _build_dependency_map(self):
         dependency_map = defaultdict(list)
@@ -127,3 +145,23 @@ class ADFActivityRun(MetadataMixin, HasMetadata):
             if self.resource.status == "Succeeded"
             else JobRunStatus.FAILED
         )
+
+
+@dataclass
+class ADFDataFlow:
+    resource: DataFlowResource
+
+    @property
+    def name(self) -> str:
+        return self.resource.name
+
+    @property
+    def data_flow_properties(self) -> DataFlow:
+        return self.resource.properties
+
+    @property
+    def sql_script(self) -> str:
+        joined_str = "".join(self.resource.properties.script_lines)
+        cleaned_str = re.sub(r"\s+", " ", joined_str).strip()
+
+        return cleaned_str
