@@ -8,7 +8,7 @@ from oddrn_generator.generators import Generator
 from odd_collector_azure.domain.plugin import DataFactoryPlugin
 
 from .client import DataFactoryClient
-from .domain import ADFActivity
+from .domain import ADFActivity, ADFDataFlow
 from .mapper.activity import map_activity
 from .mapper.activity_run import map_activity_run
 from .mapper.factory import map_factory
@@ -50,10 +50,13 @@ class Adapter(BaseAdapter):
                     [map_pipeline_run(self.generator, run) for run in pipelines_runs]
                 )
 
-                activities = [
-                    ADFActivity(act, all_activities=pipeline.activities)
-                    for act in pipeline.activities
-                ]
+                activities = []
+                for act in pipeline.activities:
+                    activity = ADFActivity(act, all_activities=pipeline.activities)
+                    if activity.type == "ExecuteDataFlow":
+                        activity.dataflow = self.client.get_data_flow(activity.name)
+                    activities.append(activity)
+
                 activities_runs = self.client.get_activity_runs(pipeline.name)
 
                 for activity in activities:

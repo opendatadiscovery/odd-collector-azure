@@ -9,7 +9,13 @@ from odd_collector_sdk.errors import DataSourceError
 
 from odd_collector_azure.domain.plugin import DataFactoryPlugin
 
-from .domain import ADFActivityRun, ADFPipeline, ADFPipelineRun, DataFactory
+from .domain import (
+    ADFActivityRun,
+    ADFDataFlow,
+    ADFPipeline,
+    ADFPipelineRun,
+    DataFactory,
+)
 
 
 def handle_errors(func):
@@ -99,3 +105,12 @@ class DataFactoryClient:
                 activity_runs[run.activity_name].append(ADFActivityRun(run))
 
         return activity_runs
+
+    @handle_errors
+    def get_data_flow(self, data_flow_name: str) -> ADFDataFlow:
+        df = self.client.data_flows.get(
+            resource_group_name=self.resource_group,
+            factory_name=self.factory,
+            data_flow_name=data_flow_name,
+        )
+        return ADFDataFlow(df)
